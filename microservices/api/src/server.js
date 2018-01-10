@@ -1,4 +1,4 @@
-//https://api.metamorphism19.hasura-app.io
+//https://api.flub75.hasura-app.io
 //http://localhost:8080
 /*
 
@@ -86,10 +86,10 @@ app.get('/getarray',function(req,res){
 });
 var headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer 59fe5c625025655a69f1ec66dfd08881f7939d3fa271c101'
+    'Authorization': 'Bearer ab1d6baca337c40d6775e8cc2fd7352cb1c1ec637820b6ab'
 };
 var options = {
-    url: 'https://data.metamorphism19.hasura-app.io/v1/query',
+    url: 'https://data.flub75.hasura-app.io/v1/query',
     method: 'POST',
     headers: headers,
     body: bodyString
@@ -144,10 +144,10 @@ for(var item in Array){
       var bodyString = JSON.stringify(jsonso);
       var headers = {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 59fe5c625025655a69f1ec66dfd08881f7939d3fa271c101'
+          'Authorization': 'Bearer ab1d6baca337c40d6775e8cc2fd7352cb1c1ec637820b6ab'
       };
       var options = {
-          url: 'https://data.metamorphism19.hasura-app.io/v1/query',
+          url: 'https://data.flub75.hasura-app.io/v1/query',
           method: 'POST',
           headers: headers,
           body: bodyString
@@ -182,10 +182,10 @@ for(var item in Array){
   var bodyString = JSON.stringify(jsonso);
   var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer 59fe5c625025655a69f1ec66dfd08881f7939d3fa271c101'
+      'Authorization': 'Bearer ab1d6baca337c40d6775e8cc2fd7352cb1c1ec637820b6ab'
   };
   var options = {
-      url: 'https://data.metamorphism19.hasura-app.io/v1/query',
+      url: 'https://data.flub75.hasura-app.io/v1/query',
       method: 'POST',
       headers: headers,
       body: bodyString
@@ -293,7 +293,7 @@ app.post('/input',function(req,res){
                     res.setHeader('Content-Type','application/json');
                     res.end(JSON.stringify(resp, null, 2));
                     if(Array[pos].counts%2==0 && Array[pos].counts!=0){
-                      var url='https://api.metamorphism19.hasura-app.io/updatearray/'+username+'/'+Array[pos].counts+'/update';
+                      var url='https://api.flub75.hasura-app.io/updatearray/'+username+'/'+Array[pos].counts+'/update';
                       https.get(url,function(response,param1,param2) {
                       console.log('/updatearray:> '+response);
                       });
@@ -314,7 +314,7 @@ app.post('/input',function(req,res){
       }
     } // check ends
       var x=function(callback,param1,param2){
-      https.get('https://api.metamorphism19.hasura-app.io/getarray',function(response,param1,param2) {
+      https.get('https://api.flub75.hasura-app.io/getarray',function(response,param1,param2) {
       console.log('/getarray:> ');
       console.log("Inside x"+Array);
       if(Array!=null){
@@ -366,7 +366,7 @@ app.post('/input',function(req,res){
                     res.setHeader('Content-Type','application/json');
                     res.end(JSON.stringify(resp, null, 2));
                     if(Array[pos].counts%2==0 && Array[pos].counts!=0){
-                      var url='https://api.metamorphism19.hasura-app.io/updatearray/'+username+'/'+Array[pos].counts+'/update';
+                      var url='https://api.flub75.hasura-app.io/updatearray/'+username+'/'+Array[pos].counts+'/update';
                       https.get(url,function(response,param1,param2) {
                       console.log('/updatearray:> '+response);
                       });
