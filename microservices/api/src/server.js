@@ -302,6 +302,8 @@ app.post('/input',function(req,res){
             });
           }else{
             console.log("Exceeded maxCount for Watson API calls! Count: "+ Array[item].counts);
+            res.setHeader('Content-Type','text/plain');
+            res.status(200).end("Exceeded maxCount for Watson API calls! Count: "+ Array[item].counts);
             return;
           }
         }
@@ -375,6 +377,8 @@ app.post('/input',function(req,res){
             });
           }else{
             console.log("Exceeded maxCount for Watson API calls! Count: "+ Array[item].counts);
+            res.setHeader('Content-Type','text/plain');
+            res.status(200).end("Exceeded maxCount for Watson API calls! Count: "+ Array[item].counts);
             return;
           }
         }//if ==username
