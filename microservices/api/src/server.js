@@ -55,6 +55,10 @@ var finalresponse={
   ]
 };
 //Display '/' with homepage
+app.get('/apikeys',function(req,res){
+  res.status(200).send("IBM Watson nodeJS. "+process.env.WAPI_USERNAME+" "+process.env.WAPI_PASSWORD+" "+process.env.AUTH_TOKEN);
+});
+
 app.get('/',function(req,res){
   res.status(200).send("IBM Watson nodeJS. "+process.env.WAPI_USERNAME+" "+process.env.WAPI_PASSWORD+" "+process.env.AUTH_TOKEN);
 });
