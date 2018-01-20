@@ -10,6 +10,7 @@
 
 
 */
+require('dotenv').config();
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
@@ -24,8 +25,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-  "username": "5e36b468-e888-470c-808f-2e46d8f4c30d",
-  "password": "musFNjTDKWhC",
+  "username": process.env.WAPI_USERNAME,
+  "password": process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
 
@@ -55,7 +56,7 @@ var finalresponse={
 };
 //Display '/' with homepage
 app.get('/',function(req,res){
-  res.status(200).send("IBM Watson nodeJS.");
+  res.status(200).send("IBM Watson nodeJS. "+process.env.WAPI_USERNAME+" "+process.env.WAPI_PASSWORD+" "+process.env.AUTH_TOKEN);
 });
 
 
@@ -86,7 +87,7 @@ app.get('/getarray',function(req,res){
 });
 var headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ab1d6baca337c40d6775e8cc2fd7352cb1c1ec637820b6ab'
+    'Authorization': process.env.AUTH_TOKEN
 };
 var options = {
     url: 'https://data.flub75.hasura-app.io/v1/query',
@@ -144,7 +145,7 @@ for(var item in Array){
       var bodyString = JSON.stringify(jsonso);
       var headers = {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ab1d6baca337c40d6775e8cc2fd7352cb1c1ec637820b6ab'
+          'Authorization': process.env.AUTH_TOKEN
       };
       var options = {
           url: 'https://data.flub75.hasura-app.io/v1/query',
@@ -182,7 +183,7 @@ for(var item in Array){
   var bodyString = JSON.stringify(jsonso);
   var headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ab1d6baca337c40d6775e8cc2fd7352cb1c1ec637820b6ab'
+      'Authorization': process.env.AUTH_TOKEN
   };
   var options = {
       url: 'https://data.flub75.hasura-app.io/v1/query',
@@ -251,7 +252,7 @@ app.post('/input',function(req,res){
     username=username.toString().toLowerCase();
     type=type.toString();
     string=string.toString();
-    if((type=='url'||type=='text')){
+    if((type=='url'||type=='text'||type=='html')){
     if(Array==null){
     console.log("Array was null.");
     //check function starts
@@ -268,6 +269,7 @@ app.post('/input',function(req,res){
             if(type=='url'){
               var parameters={
                   'url': '',
+                  'language':'en',
                   'features': {
                     'categories': {}
                   }
@@ -276,11 +278,21 @@ app.post('/input',function(req,res){
             }else if(type=='text'){
               var parameters={
                   'text': '',
+                  'language':'en',
                   'features': {
                     'categories': {}
                   }
                 }
               parameters.text=string;
+            }else if(type=='html'){
+              var parameters={
+                  'html': '',
+                  'language':'en',
+                  'features': {
+                    'categories': {}
+                  }
+                }
+              parameters.html=string;
             }
             natural_language_understanding.analyze(parameters, function(err, resp) {
                   if (err)
@@ -344,6 +356,7 @@ app.post('/input',function(req,res){
             if(type=='url'){
               var parameters={
                   'url': '',
+                  'language':'en',
                   'features': {
                     'categories': {}
                   }
@@ -352,11 +365,21 @@ app.post('/input',function(req,res){
             }else if(type=='text'){
               var parameters={
                   'text': '',
+                  'language':'en',
                   'features': {
                     'categories': {}
                   }
                 }
               parameters.text=string;
+            }else if(type=='html'){
+              var parameters={
+                  'html': '',
+                  'language':'en',
+                  'features': {
+                    'categories': {}
+                  }
+                }
+              parameters.html=string;
             }
             natural_language_understanding.analyze(parameters, function(err, resp) {
                   if (err)

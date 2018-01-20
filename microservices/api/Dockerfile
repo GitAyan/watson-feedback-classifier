@@ -7,6 +7,7 @@ WORKDIR /src
 
 #install node modules
 RUN npm install
+RUN npm install dotenv
 RUN npm install watson-developer-cloud
 
 CMD ["node", "server.js"]
