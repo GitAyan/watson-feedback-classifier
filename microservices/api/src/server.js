@@ -58,7 +58,7 @@ var finalresponse={
 };
 //Display '/' with homepage
 app.get('/apikeys',function(req,res){
-  res.status(200).send("IBM Watson nodeJS. "+process.env.WAPI_USERNAME+" "+process.env.WAPI_PASSWORD+" "+process.env.AUTH_TOKEN);
+  res.status(200).send("IBM Watson nodeJS. "+process.env.AUTH_TOKEN+" "+env.AUTH_TOKEN+" "+AUTH_TOKEN);
 
 
 /*
@@ -89,10 +89,10 @@ app.get('/',function(req,res){
 });
 
 
-app.get('/callapiteam23',function(req,res){
-    res.setHeader('Content-Type','text/html');
-    res.status(200).send("<h1>Please use /getarray endpoint henceforth.</h1><br><hr>"+ JSON.stringify(Array));
-});
+// app.get('/callapiteam23',function(req,res){
+//     res.setHeader('Content-Type','text/html');
+//     res.status(200).send("<h1>Please use /getarray endpoint henceforth.</h1><br><hr>"+ JSON.stringify(Array));
+// });
 
 
 app.get('/ibm/demo',function(req,res){
