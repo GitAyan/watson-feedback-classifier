@@ -31,7 +31,7 @@ var natural_language_understanding = new NaturalLanguageUnderstandingV1({
 });
 //const SparkPost = require(‘sparkpost’)
 //const client = new SparkPost(process.env.SPARKPOST_KEY);
-
+var AUTH1='Bearer '+process.env.AUTH_TOKEN;
 var Array=null;
 var finalresponse={
   "usage": {
@@ -58,7 +58,7 @@ var finalresponse={
 };
 //Display '/' with homepage
 app.get('/apikeys',function(req,res){
-  res.status(200).send("IBM Watson nodeJS. "+process.env.AUTH_TOKEN);
+  res.status(200).send(AUTH1+" IBM Watson nodeJS. "+process.env.AUTH_TOKEN );
 
 
 /*
@@ -116,7 +116,7 @@ app.get('/getarray',function(req,res){
 });
 var headers = {
     'Content-Type': 'application/json',
-    'Authorization': process.env.AUTH_TOKEN
+    'Authorization': AUTH1
 };
 var options = {
     url: 'https://data.flub75.hasura-app.io/v1/query',
@@ -174,7 +174,7 @@ for(var item in Array){
       var bodyString = JSON.stringify(jsonso);
       var headers = {
           'Content-Type': 'application/json',
-          'Authorization': process.env.AUTH_TOKEN
+          'Authorization': AUTH1
       };
       var options = {
           url: 'https://data.flub75.hasura-app.io/v1/query',
@@ -212,7 +212,7 @@ for(var item in Array){
   var bodyString = JSON.stringify(jsonso);
   var headers = {
       'Content-Type': 'application/json',
-      'Authorization': process.env.AUTH_TOKEN
+      'Authorization': AUTH1
   };
   var options = {
       url: 'https://data.flub75.hasura-app.io/v1/query',
@@ -309,7 +309,8 @@ app.post('/input',function(req,res){
                       'emotion': true,
                       'sentiment': true,
                       'limit': 10
-                    }
+                    },
+                    'categories': {}
                   }
                 }
               parameters.url=string;
@@ -327,7 +328,8 @@ app.post('/input',function(req,res){
                       'emotion': true,
                       'sentiment': true,
                       'limit': 10
-                    }
+                    },
+                    'categories': {}
                   }
                 }
               parameters.text=string;
@@ -345,7 +347,8 @@ app.post('/input',function(req,res){
                       'emotion': true,
                       'sentiment': true,
                       'limit': 10
-                    }
+                    },
+                    'categories': {}
                   }
                 }
               parameters.html=string;
@@ -423,7 +426,8 @@ app.post('/input',function(req,res){
                       'emotion': true,
                       'sentiment': true,
                       'limit': 10
-                    }
+                    },
+                    'categories': {}
                   }
                 }
               parameters.url=string;
@@ -441,7 +445,8 @@ app.post('/input',function(req,res){
                       'emotion': true,
                       'sentiment': true,
                       'limit': 10
-                    }
+                    },
+                    'categories': {}
                   }
                 }
               parameters.text=string;
@@ -459,7 +464,8 @@ app.post('/input',function(req,res){
                       'emotion': true,
                       'sentiment': true,
                       'limit': 10
-                    }
+                    },
+                    'categories': {}
                   }
                 }
               parameters.html=string;
