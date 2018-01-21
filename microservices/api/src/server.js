@@ -29,6 +29,8 @@ var natural_language_understanding = new NaturalLanguageUnderstandingV1({
   "password": process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
+//const SparkPost = require(‘sparkpost’)
+//const client = new SparkPost(process.env.SPARKPOST_KEY);
 
 var Array=null;
 var finalresponse={
@@ -57,6 +59,29 @@ var finalresponse={
 //Display '/' with homepage
 app.get('/apikeys',function(req,res){
   res.status(200).send("IBM Watson nodeJS. "+process.env.WAPI_USERNAME+" "+process.env.WAPI_PASSWORD+" "+process.env.AUTH_TOKEN);
+
+
+/*
+  client.transmissions.send({
+    content: {
+      from: ‘test@your-sending-domain.com’,
+      subject: ‘Hello from node-sparkpost’,
+      html: ‘<p>Hello world</p>’
+    },
+    recipients: [
+      {address: 'someone@somedomain.com'}
+    ]
+  })
+  .then(data => {
+    console.log('Woohoo! You just sent your first mailing!')
+    console.log(data)
+  })
+  .catch(err => {
+    console.log('Whoops! Something went wrong')
+    console.log(err)
+  })
+*/
+
 });
 
 app.get('/',function(req,res){
@@ -183,7 +208,7 @@ for(var item in Array){
     res.status(200).end("Bad Username Request");
   }
   }
-}else if(admintoken=='ayanboi' && Array!=null){
+}else if(admintoken==process.env.ADMIN_TOKEN && Array!=null){
   var bodyString = JSON.stringify(jsonso);
   var headers = {
       'Content-Type': 'application/json',
@@ -221,7 +246,7 @@ for(var item in Array){
   }
 
 }else{
-  res.status(400).send("Bad Request! Either /callpiteam23 or invalid token.");
+  res.status(400).send("Bad Request! Either /getarray or invalid token.");
 }
 
 
@@ -275,7 +300,16 @@ app.post('/input',function(req,res){
                   'url': '',
                   'language':'en',
                   'features': {
-                    'categories': {}
+                    'entities': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    },
+                    'keywords': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    }
                   }
                 }
               parameters.url=string;
@@ -284,7 +318,16 @@ app.post('/input',function(req,res){
                   'text': '',
                   'language':'en',
                   'features': {
-                    'categories': {}
+                    'entities': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    },
+                    'keywords': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    }
                   }
                 }
               parameters.text=string;
@@ -293,7 +336,16 @@ app.post('/input',function(req,res){
                   'html': '',
                   'language':'en',
                   'features': {
-                    'categories': {}
+                    'entities': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    },
+                    'keywords': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    }
                   }
                 }
               parameters.html=string;
@@ -362,7 +414,16 @@ app.post('/input',function(req,res){
                   'url': '',
                   'language':'en',
                   'features': {
-                    'categories': {}
+                    'entities': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    },
+                    'keywords': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    }
                   }
                 }
               parameters.url=string;
@@ -371,7 +432,16 @@ app.post('/input',function(req,res){
                   'text': '',
                   'language':'en',
                   'features': {
-                    'categories': {}
+                    'entities': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    },
+                    'keywords': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    }
                   }
                 }
               parameters.text=string;
@@ -380,7 +450,16 @@ app.post('/input',function(req,res){
                   'html': '',
                   'language':'en',
                   'features': {
-                    'categories': {}
+                    'entities': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    },
+                    'keywords': {
+                      'emotion': true,
+                      'sentiment': true,
+                      'limit': 10
+                    }
                   }
                 }
               parameters.html=string;
@@ -418,7 +497,7 @@ app.post('/input',function(req,res){
     }//else of Array==null
   }//end of if(type==..)
   else{
-    res.end('Incorrect request type Headers');
+    res.status(400).end('Incorrect request type Headers');
   }
   }//end of else of if(username===undefined|| ...)
 });
