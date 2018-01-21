@@ -89,10 +89,10 @@ app.get('/',function(req,res){
 });
 
 
-// app.get('/callapiteam23',function(req,res){
-//     res.setHeader('Content-Type','text/html');
-//     res.status(200).send("<h1>Please use /getarray endpoint henceforth.</h1><br><hr>"+ JSON.stringify(Array));
-// });
+app.get('/callapiteam23',function(req,res){
+    res.setHeader('Content-Type','text/html');
+    res.status(200).send("<h1>Please use /getarray endpoint henceforth.</h1><br><hr>"+ JSON.stringify(Array));
+});
 
 
 app.get('/ibm/demo',function(req,res){
