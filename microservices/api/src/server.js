@@ -10,7 +10,7 @@
 
 
 */
-require('dotenv').config();
+//require('dotenv').config();
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
