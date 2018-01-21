@@ -58,7 +58,7 @@ var finalresponse={
 };
 //Display '/' with homepage
 app.get('/apikeys',function(req,res){
-  res.status(200).send("IBM Watson nodeJS. "+process.env.AUTH_TOKEN+" "+env.AUTH_TOKEN+" "+AUTH_TOKEN);
+  res.status(200).send("IBM Watson nodeJS. "+process.env.AUTH_TOKEN);
 
 
 /*
