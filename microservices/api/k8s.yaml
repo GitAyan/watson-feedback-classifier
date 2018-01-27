@@ -43,6 +43,11 @@ items:
               secretKeyRef:
                 name: hasura-secrets
                 key: admin.token
+          - name: AUTH_ADMIN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hasura-secrets
+                key: authadmin.token
           ports:
           - containerPort: 8080
             protocol: TCP

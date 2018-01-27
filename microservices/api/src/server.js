@@ -32,6 +32,7 @@ var natural_language_understanding = new NaturalLanguageUnderstandingV1({
 //const SparkPost = require(‘sparkpost’)
 //const client = new SparkPost(process.env.SPARKPOST_KEY);
 var AUTH1='Bearer '+process.env.AUTH_TOKEN;
+var AUTH2='Bearer '+process.env.AUTH_ADMIN_TOKEN;
 var Array=null;
 var finalresponse={
   "usage": {
@@ -57,32 +58,32 @@ var finalresponse={
   ]
 };
 //Display '/' with homepage
-app.get('/apikeys',function(req,res){
-  res.status(200).send(AUTH1+" IBM Watson nodeJS. "+process.env.AUTH_TOKEN );
-
-
-/*
-  client.transmissions.send({
-    content: {
-      from: ‘test@your-sending-domain.com’,
-      subject: ‘Hello from node-sparkpost’,
-      html: ‘<p>Hello world</p>’
-    },
-    recipients: [
-      {address: 'someone@somedomain.com'}
-    ]
-  })
-  .then(data => {
-    console.log('Woohoo! You just sent your first mailing!')
-    console.log(data)
-  })
-  .catch(err => {
-    console.log('Whoops! Something went wrong')
-    console.log(err)
-  })
-*/
-
-});
+// app.get('/apikeys',function(req,res){
+//   res.status(200).send(AUTH1+" IBM Watson nodeJS. "+process.env.AUTH_TOKEN );
+//
+//
+// /*
+//   client.transmissions.send({
+//     content: {
+//       from: ‘test@your-sending-domain.com’,
+//       subject: ‘Hello from node-sparkpost’,
+//       html: ‘<p>Hello world</p>’
+//     },
+//     recipients: [
+//       {address: 'someone@somedomain.com'}
+//     ]
+//   })
+//   .then(data => {
+//     console.log('Woohoo! You just sent your first mailing!')
+//     console.log(data)
+//   })
+//   .catch(err => {
+//     console.log('Whoops! Something went wrong')
+//     console.log(err)
+//   })
+// */
+//
+// });
 
 app.get('/',function(req,res){
   res.status(200).send("IBM Watson nodeJS. ");
@@ -270,6 +271,56 @@ app.post('/ibm/demo/post',function(req,res){
     }
   }
 });
+
+
+/*
+app.post('/sendemail',function(req,res){
+var jsonbody={
+  "to": "Example User <user@example.com>",
+  "from": "admin@project.com",
+  "fromName": "enDe",
+  "sub": "This is the email subject line",
+  "text": "This is the email content in plain text",
+  "html": "<p>This is the <b>email content</b> in html format</p>"
+};
+
+var bodyString = JSON.stringify(jsonbody);
+
+var headers = {
+    'Content-Type': 'application/json',
+    'Authorization': AUTH2,
+    'X-Hasura-User-Id': '1',
+    'X-Hasura-User-Role' :'admin'
+};
+
+var options = {
+    url: 'https://notify.flub75.hasura-app.io/v1/send/email',
+    method: 'POST',
+    headers: headers,
+    body: bodyString
+}
+
+var r= request(options, function (error, response, body) {
+  if(!error && response.statusCode == 200){
+    Array=JSON.parse(body);
+    console.log(Array);
+    res.status(200).send(response);
+    r.abort();
+  }
+  else{
+    if(response===undefined||response===null){
+      res.status(500).end('Some error ocurred connecting to Hasura\'s Notify: '+error);
+      r.abort();
+    }
+    else{
+    res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
+    r.abort();
+  }
+  }
+});
+});
+*/
+
 
 app.post('/input',function(req,res){
   var username=req.body.username;
