@@ -43,3 +43,16 @@ If you are using any extra python packages, just add them to microservices/api/s
 
 ## Support
 If you happen to get stuck anywhere, please mail at <>. Alternatively, if you find a bug, you can raise an issue [here]().
+
+## Frontend features/tasks (Part-1)
+* Allow a user to enter a text that can be analysed using the custom Watson integration and displays the results of the identified category along with other details you can choose in a tabular form.
+Handle any obvious errors.
+
+ ## Github link
+*   https://github.com/priyarg/Watson
+
+## Expo link : https://exp.host/@priyarg/imadapprna
+* To run expo link download expo on device. click above link and send expo link to your device or scan using expo app.
+
+## Apk link : https://drive.google.com/file/d/1D6DpyUeDVZF9mDfIrMMRpIgpWoCo6fXx/view?usp=sharing
+* Download apk on device.  Open the link on device.
