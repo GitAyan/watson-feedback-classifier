@@ -1,15 +1,4 @@
 //https://api.flub75.hasura-app.io
-//http://localhost:8080
-/*
-
-{
-	"username":"sam",
-	"type":"url",
-	"string":"www.google.co.in"
-}
-
-
-*/
 //require('dotenv').config();
 var express = require('express');
 var morgan = require('morgan');
