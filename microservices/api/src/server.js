@@ -46,33 +46,51 @@ var finalresponse={
     }
   ]
 };
-//Display '/' with homepage
-// app.get('/apikeys',function(req,res){
-//   res.status(200).send(AUTH1+" IBM Watson nodeJS. "+process.env.AUTH_TOKEN );
-//
-//
-// /*
-//   client.transmissions.send({
-//     content: {
-//       from: ‘test@your-sending-domain.com’,
-//       subject: ‘Hello from node-sparkpost’,
-//       html: ‘<p>Hello world</p>’
-//     },
-//     recipients: [
-//       {address: 'someone@somedomain.com'}
-//     ]
-//   })
-//   .then(data => {
-//     console.log('Woohoo! You just sent your first mailing!')
-//     console.log(data)
-//   })
-//   .catch(err => {
-//     console.log('Whoops! Something went wrong')
-//     console.log(err)
-//   })
-// */
-//
-// });
+
+function createTemplate (data) {
+    var title = data.title;
+    var date = data.date;
+    var heading = data.heading;
+    var content = data.content;
+
+    var htmlTemplate = `
+    <html>
+      <head>
+          <title>
+              ${title}
+          </title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link href="/ui/style.css" rel="stylesheet" />
+      </head>
+      <body>
+          <div class="container">
+              <div>
+                  <a href="/">Home</a>
+              </div>
+              <hr/>
+              <h3>
+                  ${heading}
+              </h3>
+              <div>
+                  ${date.toDateString()}
+              </div>
+              <div>
+                ${content}
+              </div>
+              <hr/>
+              <h4>Comments</h4>
+              <div id="comment_form">
+              </div>
+              <div id="comments">
+                <center>Loading comments...</center>
+              </div>
+          </div>
+          <script type="text/javascript" src="/ui/article.js"></script>
+      </body>
+    </html>
+    `;
+    return htmlTemplate;
+}
 
 app.get('/',function(req,res){
   res.status(200).send("IBM Watson nodeJS. ");
@@ -261,9 +279,10 @@ app.post('/ibm/demo/post',function(req,res){
   }
 });
 
-
 /*
 app.post('/sendemail',function(req,res){
+var username=req.body.username;
+var emailid=req.body.emailid;
 var jsonbody={
   "to": "Example User <user@example.com>",
   "from": "admin@project.com",
@@ -309,7 +328,6 @@ var r= request(options, function (error, response, body) {
 });
 });
 */
-
 
 app.post('/input',function(req,res){
   var username=req.body.username;
