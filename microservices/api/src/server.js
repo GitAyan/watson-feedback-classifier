@@ -54,40 +54,32 @@ function createTemplate (data) {
     var content = data.content;
 
     var htmlTemplate = `
-    <html>
-      <head>
-          <title>
-              ${title}
-          </title>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link href="/ui/style.css" rel="stylesheet" />
-      </head>
-      <body>
-          <div class="container">
-              <div>
-                  <a href="/">Home</a>
-              </div>
-              <hr/>
-              <h3>
+
                   ${heading}
-              </h3>
-              <div>
-                  ${date.toDateString()}
-              </div>
-              <div>
-                ${content}
-              </div>
-              <hr/>
-              <h4>Comments</h4>
-              <div id="comment_form">
-              </div>
-              <div id="comments">
-                <center>Loading comments...</center>
-              </div>
-          </div>
-          <script type="text/javascript" src="/ui/article.js"></script>
-      </body>
-    </html>
+                  <div class='container'>
+
+<header>
+   <h1>City Gallery</h1>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#">London</a></li>
+    <li><a href="#">Paris</a></li>
+    <li><a href="#">Tokyo</a></li>
+  </ul>
+</nav>
+
+<article>
+  <h1>London</h1>
+  <p>London is the capital city of England. It is the most populous city in the  United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
+  <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.</p>
+</article>
+
+<footer>Copyright CompanyName &copy;</footer>
+
+</div>
+
     `;
     return htmlTemplate;
 }
