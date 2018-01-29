@@ -6,7 +6,7 @@
 Handle any obvious errors.
 
 ## Working of app
-* User submits username(sam/gaurav/karthikeya) on login screen and gets access to watson screen.
+* User submits username on login screen and gets access to watson screen.
 * When user enters sample question (url or plain text), Watson API processes the request and displays appropriate           categories and score in percentage.
 * The server endpoint needs two inputs: username and question. Question entered can be in any        format like text or URL. Entered question is checked for text or URL using regex. 
 * A POST request with content type as application/json is made to custom microservice  (Watson Natural 
