@@ -12,17 +12,22 @@ var cookieParser = require('cookie-parser');
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+//For Watson Integration
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
   "username": process.env.WAPI_USERNAME,
   "password": process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
-//const SparkPost = require(‘sparkpost’)
-//const client = new SparkPost(process.env.SPARKPOST_KEY);
+//For Data updatation
 var AUTH1='Bearer '+process.env.AUTH_TOKEN;
+//For Admin Token to send Emails
 var AUTH2='Bearer '+process.env.AUTH_ADMIN_TOKEN;
+//Global Array to hold counts of user
 var Array=null;
+
+//Demo Response for Front-End
 var finalresponse={
   "usage": {
     "text_units": 1,
@@ -47,59 +52,17 @@ var finalresponse={
   ]
 };
 
-function createTemplate (data) {
-    var title = data.title;
-    var date = data.date;
-    var heading = data.heading;
-    var content = data.content;
-
-var htmlTemplate = `
-
-                  ${heading}
-                  <div class='container'>
-
-<header>
-   <h1>City Gallery</h1>
-</header>
-
-<nav>
-  <ul>
-    <li><a href="#">London</a></li>
-    <li><a href="#">Paris</a></li>
-    <li><a href="#">Tokyo</a></li>
-  </ul>
-</nav>
-
-<article>
-  <h1>London</h1>
-  <p>London is the capital city of England. It is the most populous city in the  United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
-  <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.</p>
-</article>
-
-<footer>Copyright CompanyName &copy;</footer>
-
-</div>
-
-    `;
-    return htmlTemplate;
-}
-
 app.get('/',function(req,res){
-  res.status(200).send("IBM Watson nodeJS. ");
+  res.status(200).send("IBM Watson nodeJS.");
 });
 
-
-app.get('/callapiteam23',function(req,res){
-    res.setHeader('Content-Type','text/html');
-    res.status(200).send("<h1>Please use /getarray endpoint henceforth.</h1><br><hr>"+ JSON.stringify(Array));
-});
-
-
+//GET Demo Url
 app.get('/ibm/demo',function(req,res){
   res.setHeader('Content-Type','application/json');
   res.status(200).end(JSON.stringify(finalresponse));
 });
 
+//Get Array of Counts
 app.get('/getarray',function(req,res){
   if(Array!=null){
     res.status(200).send(JSON.stringify(Array));
@@ -144,6 +107,49 @@ var r= request(options, function (error, response, body) {
 });
 }
 });
+
+/*
+//Endpoint for Gathering Negative feedback.
+app.get('/getnegativefeedback',function(req,res){
+  var bodyString = JSON.stringify({
+    "type": "select",
+    "args": {
+        "table": "feedback",
+        "columns": [
+            "*"
+        ]
+    }
+  });
+var headers = {
+    'Content-Type': 'application/json',
+    'Authorization': AUTH1
+};
+var options = {
+    url: 'https://data.flub75.hasura-app.io/v1/query',
+    method: 'POST',
+    headers: headers,
+    body: bodyString
+}
+var r= request(options, function (error, response, body) {
+  if(!error && response.statusCode == 200){
+    console.log("GET Request made to /getnegativefeedback");
+    res.status(200).send(response);
+    r.abort();
+  }
+  else{
+    if(response===undefined||response===null){
+      res.status(500).end('Some error ocurred connecting to Hasura: '+error);
+      r.abort();
+    }
+    else{
+    res.status(500).end('Some error ocurred: '+error+' statusCode:', response.statusCode);
+    r.abort();
+  }
+  }
+});
+
+});
+*/
 
 app.get('/updatearray/:username/:counts/:admintoken',function(req,res){
   var username=req.params.username;
@@ -248,10 +254,9 @@ for(var item in Array){
 }else{
   res.status(400).send("Bad Request! Either /getarray or invalid token.");
 }
-
-
 });
 
+//POST Demo URL
 app.post('/ibm/demo/post',function(req,res){
   var username=req.body.username;
   var type=req.body.type;
@@ -271,18 +276,40 @@ app.post('/ibm/demo/post',function(req,res){
   }
 });
 
+
 /*
 app.post('/sendemail',function(req,res){
+
+//{
+//  "username":"sam",
+//  "emailid":"endecipher@gmail.com",
+//  "feedbacktext":"",
+//  "score":""
+//}
+
 var username=req.body.username;
 var emailid=req.body.emailid;
+var feedbacktext=req.body.feedbacktext;
+var score=req.body.score;
+var htmlTemplate="";
+if(score==10){
+    htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback.</center></h1><br><p>We deeply apologize for the inconvenience caused. Our Customer Service will contact you shortly.</p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
+}else if(score==20){
+    htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback.</center></h1><br><p>Your complaint has been registered. We're sorry for the inconvenience caused.</p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
+}else if(score==30){
+    htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback.</center></h1><br><p>Thank you for choosing our service! We're glad you're content! We hope you will continue to use our services in the future.</p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
+}
 var jsonbody={
-  "to": "Example User <user@example.com>",
-  "from": "admin@project.com",
-  "fromName": "enDe",
-  "sub": "This is the email subject line",
-  "text": "This is the email content in plain text",
-  "html": "<p>This is the <b>email content</b> in html format</p>"
-};
+    "to": "",
+    "from": "example@organization.com",
+    "fromName": "Example",
+    "sub": "Recent Feedback Email",
+    "text": "Sorry for the inconvenience caused. We regret it.",
+    "html": ""
+  };
+
+jsonbody.to=emailid;
+jsonbody.html=htmlTemplate;
 
 var bodyString = JSON.stringify(jsonbody);
 
@@ -302,9 +329,8 @@ var options = {
 
 var r= request(options, function (error, response, body) {
   if(!error && response.statusCode == 200){
-    Array=JSON.parse(body);
-    console.log(Array);
-    res.status(200).send(response);
+    console.log(response);
+    res.status(200).end(response);
     r.abort();
   }
   else{
@@ -313,11 +339,12 @@ var r= request(options, function (error, response, body) {
       r.abort();
     }
     else{
-    res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
+    res.status(500).end('some error ocurred sending an email: '+error+' statusCode:', response.statusCode);
     r.abort();
   }
   }
 });
+
 });
 */
 
@@ -557,7 +584,6 @@ app.post('/input',function(req,res){
   }
   }//end of else of if(username===undefined|| ...)
 });
-
 
 var port = 8080;
 app.listen(port, function () {
