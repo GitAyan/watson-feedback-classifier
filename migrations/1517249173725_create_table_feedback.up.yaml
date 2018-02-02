@@ -1,7 +1,0 @@
-- args:
-    sql: CREATE TABLE "feedback"("feedback_id" bigserial NOT NULL, "email_id" text
-      NOT NULL, "feedback_text" text NOT NULL, PRIMARY KEY ("feedback_id") )
-  type: run_sql
-- args:
-    name: feedback
-  type: add_existing_table_or_view

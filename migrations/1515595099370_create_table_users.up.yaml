@@ -1,7 +1,0 @@
-- args:
-    sql: CREATE TABLE "users"("user_hash" text NOT NULL, "user_id" bigserial NOT NULL,
-      "counts" bigint NOT NULL, PRIMARY KEY ("user_hash","user_id") )
-  type: run_sql
-- args:
-    name: users
-  type: add_existing_table_or_view
