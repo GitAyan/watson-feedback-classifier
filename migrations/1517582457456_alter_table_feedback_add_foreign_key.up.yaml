@@ -1,0 +1,3 @@
+- args:
+    sql: ALTER TABLE "feedback" ADD FOREIGN KEY ("user_id") REFERENCES "sample" ("user_id")
+  type: run_sql
