@@ -13,11 +13,10 @@ app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-
 //For Watson Integration
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-  "username": process.env.WAPI_USERNAME
+  "username": process.env.WAPI_USERNAME,
   "password": process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
