@@ -580,6 +580,7 @@ app.post('/input',function(req,res){
     }//else of Array==null
   }//end of if(type==..)
   else{
+    
     res.status(400).end('Incorrect request type Headers');
   }
   }//end of else of if(username===undefined|| ...)
