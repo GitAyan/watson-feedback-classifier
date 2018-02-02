@@ -58,6 +58,7 @@ app.get('/',function(req,res){
   res.status(200).send("IBM Watson nodeJS.");
 });
 
+
 //GET Demo Url
 app.get('/ibm/demo',function(req,res){
   res.setHeader('Content-Type','application/json');
