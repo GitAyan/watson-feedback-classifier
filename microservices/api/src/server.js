@@ -148,9 +148,8 @@ var options = {
 }
 var r= request(options, function (error, response, body) {
   if(!error && response.statusCode == 200){
-    Array=JSON.parse(body);
-    console.log(Array);
-    res.status(200).send(JSON.stringify(Array));
+    res.setHeader("Content-Type","application/json");
+    res.status(200).send(body);
     r.abort();
   }
   else{
