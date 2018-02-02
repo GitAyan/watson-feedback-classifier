@@ -16,7 +16,7 @@ app.use(cookieParser());
 //For Watson Integration
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-  "username": process.env.WAPI_USERNAME,
+  "username": process.env.WAPI_USERNAME
   "password": process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
@@ -26,7 +26,8 @@ var AUTH1='Bearer '+process.env.AUTH_TOKEN;
 var AUTH2='Bearer '+process.env.AUTH_ADMIN_TOKEN;
 //Global Array to hold counts of user
 var Array=null;
-
+var SampleArray=null;
+var posFeedBack=0, negFeedBack=0;
 //Demo Response for Front-End
 var finalresponse={
   "usage": {
@@ -62,6 +63,18 @@ app.get('/ibm/demo',function(req,res){
   res.status(200).end(JSON.stringify(finalresponse));
 });
 
+//Get +/- Count for Feedback
+app.get('/getcounts',function(req,res){
+  var jsonso={
+    "positive":"",
+    "negative":""
+  };
+  jsonso.positive=posFeedBack;
+  jsonso.negative=negFeedBack;
+  res.setHeader('Content-Type','application/json');
+  res.status(200).end(JSON.stringify(jsonso));
+});
+
 //Get Array of Counts
 app.get('/getarray',function(req,res){
   if(Array!=null){
@@ -72,6 +85,51 @@ app.get('/getarray',function(req,res){
     "type": "select",
     "args": {
         "table": "users",
+        "columns": [
+            "*"
+        ]
+    }
+});
+var headers = {
+    'Content-Type': 'application/json',
+    'Authorization': AUTH1
+};
+
+var options = {
+    url: 'https://data.flub75.hasura-app.io/v1/query',
+    method: 'POST',
+    headers: headers,
+    body: bodyString
+}
+
+var r= request(options, function (error, response, body) {
+  if(!error && response.statusCode == 200){
+    Array=JSON.parse(body);
+    console.log(Array);
+    res.status(200).send(JSON.stringify(Array));
+    r.abort();
+  }
+  else{
+    if(response===undefined||response===null){
+      res.status(500).end('Some error ocurred connecting to Hasura: '+error);
+      r.abort();
+    }
+    else{
+    res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
+    r.abort();
+  }
+  }
+});
+}
+});
+
+
+//Endpoint for Gathering Negative feedback.
+app.get('/getneg',function(req,res){
+  var bodyString = JSON.stringify({
+    "type": "select",
+    "args": {
+        "table": "feedback",
         "columns": [
             "*"
         ]
@@ -105,51 +163,8 @@ var r= request(options, function (error, response, body) {
   }
   }
 });
-}
 });
 
-/*
-//Endpoint for Gathering Negative feedback.
-app.get('/getnegativefeedback',function(req,res){
-  var bodyString = JSON.stringify({
-    "type": "select",
-    "args": {
-        "table": "feedback",
-        "columns": [
-            "*"
-        ]
-    }
-  });
-var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': AUTH1
-};
-var options = {
-    url: 'https://data.flub75.hasura-app.io/v1/query',
-    method: 'POST',
-    headers: headers,
-    body: bodyString
-}
-var r= request(options, function (error, response, body) {
-  if(!error && response.statusCode == 200){
-    console.log("GET Request made to /getnegativefeedback");
-    res.status(200).send(response);
-    r.abort();
-  }
-  else{
-    if(response===undefined||response===null){
-      res.status(500).end('Some error ocurred connecting to Hasura: '+error);
-      r.abort();
-    }
-    else{
-    res.status(500).end('Some error ocurred: '+error+' statusCode:', response.statusCode);
-    r.abort();
-  }
-  }
-});
-
-});
-*/
 
 app.get('/updatearray/:username/:counts/:admintoken',function(req,res){
   var username=req.params.username;
@@ -203,7 +218,7 @@ for(var item in Array){
           else{
           res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
           r.abort();
-        }
+          }
         }
       });
 
@@ -277,77 +292,265 @@ app.post('/ibm/demo/post',function(req,res){
 });
 
 
-/*
-app.post('/sendemail',function(req,res){
-
-//{
-//  "username":"sam",
-//  "emailid":"endecipher@gmail.com",
-//  "feedbacktext":"",
-//  "score":""
-//}
-
-var username=req.body.username;
-var emailid=req.body.emailid;
-var feedbacktext=req.body.feedbacktext;
-var score=req.body.score;
-var htmlTemplate="";
-if(score==10){
-    htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback.</center></h1><br><p>We deeply apologize for the inconvenience caused. Our Customer Service will contact you shortly.</p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
-}else if(score==20){
-    htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback.</center></h1><br><p>Your complaint has been registered. We're sorry for the inconvenience caused.</p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
-}else if(score==30){
-    htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback.</center></h1><br><p>Thank you for choosing our service! We're glad you're content! We hope you will continue to use our services in the future.</p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
-}
-var jsonbody={
-    "to": "",
-    "from": "example@organization.com",
-    "fromName": "Example",
-    "sub": "Recent Feedback Email",
-    "text": "Sorry for the inconvenience caused. We regret it.",
-    "html": ""
-  };
-
-jsonbody.to=emailid;
-jsonbody.html=htmlTemplate;
-
-var bodyString = JSON.stringify(jsonbody);
-
-var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': AUTH2,
-    'X-Hasura-User-Id': '1',
-    'X-Hasura-User-Role' :'admin'
-};
-
-var options = {
-    url: 'https://notify.flub75.hasura-app.io/v1/send/email',
-    method: 'POST',
-    headers: headers,
-    body: bodyString
-}
-
-var r= request(options, function (error, response, body) {
-  if(!error && response.statusCode == 200){
-    console.log(response);
-    res.status(200).end(response);
-    r.abort();
-  }
-  else{
-    if(response===undefined||response===null){
-      res.status(500).end('Some error ocurred connecting to Hasura\'s Notify: '+error);
-      r.abort();
+//Login Endpoint
+app.post('/login',function(req,res){
+  var username=req.body.username;
+  var password=req.body.password;
+  var pos;
+  if(SampleArray!=null){
+    pos=null;
+    username=username.toString().toLowerCase();
+    password=password.toString();
+    for(var item in SampleArray){
+      console.log();
+      if(SampleArray[item].user_name==username && SampleArray[item].password==password){
+        console.log("Found: "+username);
+        pos=item;
+        break;
+      }
     }
-    else{
-    res.status(500).end('some error ocurred sending an email: '+error+' statusCode:', response.statusCode);
-    r.abort();
-  }
-  }
+    if(pos==null){
+      res.status(400).end("Credentials Incorrect.");
+    }else{
+      var jsonso={
+        "user_id":"",
+        "email_id":"",
+        "user_name":""
+      };
+      jsonso.user_id=SampleArray[pos].user_id;
+      jsonso.email_id=SampleArray[pos].email_id;
+      jsonso.user_name=SampleArray[pos].user_name;
+      res.setHeader("Content-Type","application/json");
+      res.status(200).end(JSON.stringify(jsonso));
+    }
+  }else{ //SampleArray!=Null If case ends
+
+    var bodyString = JSON.stringify({
+        "type": "select",
+        "args": {
+            "table": "sample",
+            "columns": [
+                "*"
+            ]
+        }
+    });
+    var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': AUTH1
+    };
+
+    var options = {
+        url: 'https://data.flub75.hasura-app.io/v1/query',
+        method: 'POST',
+        headers: headers,
+        body: bodyString
+    }
+
+    var r= request(options, function (error, response, body) {
+      if(!error && response.statusCode == 200){
+        SampleArray=JSON.parse(body);
+        //console.log(SampleArray);
+        pos=null;
+        for(var item in SampleArray){
+          //console.log();
+          if(SampleArray[item].user_name==username && SampleArray[item].password==password){
+            console.log("Found: "+username);
+            pos=item;
+            break;
+          }
+        }
+        if(pos==null){
+          res.status(400).end("Credentials Incorrect.");
+        }else{
+          var jsonso={
+            "user_id":"",
+            "email_id":"",
+            "user_name":""
+          };
+          jsonso.user_id=SampleArray[pos].user_id;
+          jsonso.email_id=SampleArray[pos].email_id;
+          jsonso.user_name=SampleArray[pos].user_name;
+          res.setHeader("Content-Type","application/json");
+          res.status(200).end(JSON.stringify(jsonso));
+        }
+      }
+      else{
+        if(response===undefined||response===null){
+          res.status(500).end('Some error ocurred connecting to Hasura (Sample Array): '+error);
+          r.abort();
+        }
+        else{
+        res.end('some error ocurred (Sample Array): '+error+' statusCode:', response.statusCode);
+        r.abort();
+      }
+      }
+    });
+
+  }//If Sample Array Null ELSE ends
+
 });
+/*
+app.post('/senddemo',function(req,res){
+
+  {
+  "username":"sam",
+  "emailid":"facebook@gmail.com",
+  "score":"10/20/30"
+  }
+
+  var username=req.body.username;
+  var emailid=req.body.emailid;
+  var score=req.body.score;
 
 });
 */
+app.post('/sendemail',function(req,res){
+  var username=req.body.username;
+  var user_id=req.body.user_id;
+  var emailid=req.body.emailid;
+  var feedbacktext=req.body.feedbacktext;
+  var score=req.body.score;
+  console.log(feedbacktext+"=="+score);
+/*
+{
+ "username":"sam",
+ "user_id":"1",
+ "emailid":"endecipher@gmail.com",
+ "feedbacktext":"",
+ "score":""
+}
+*/
 
+var updateTable=function(callback){
+  var status2=undefined;
+  if(score==20){
+    posFeedBack++;
+    status2=200;
+    callback(status2);
+  }
+  else{
+     //Change Body String for Insert in Feedback Table.
+    var jsonso={
+    "type": "insert",
+    "args": {
+        "table": "feedback",
+        "objects": [
+            {
+                "priority": "",
+                "user_id": "",
+                "feedback_text": ""
+            }
+        ]
+      }
+    };
+    jsonso.args.objects[0].feedback_text=feedbacktext;
+    jsonso.args.objects[0].user_id=user_id;
+    if(score==30)
+    jsonso.args.objects[0].priority="high";
+    else {
+      jsonso.args.objects[0].priority="low";
+    }
+
+    var bodyString = JSON.stringify(jsonso);
+    var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': AUTH1
+    };
+    var options = {
+        url: 'https://data.flub75.hasura-app.io/v1/query',
+        method: 'POST',
+        headers: headers,
+        body: bodyString
+    }
+
+    var r= request(options, function (error, response, body) {
+      if(!error && response.statusCode == 200){
+        console.log(body);
+        status2=200;
+        negFeedBack++;
+        callback(status2);
+        r.abort();
+      }
+      else{
+        if(response===undefined||response===null){
+          status2=500;
+          r.abort();
+        }
+        else{
+        status2=500;
+        r.abort();
+      }
+      }
+    });
+  }
+
+}
+
+
+var sendEmail=function(status2){
+  if(status2!=200){
+    res.setHeader("Content-Type","text/html");
+    res.end("Couldn't update feedback: Error Data API");
+  }
+  else{
+    var htmlTemplate="";
+    if(score==10){
+        htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback, "+username+"</center></h1><br><p><center>Thank You for choosing this product/service. We're sorry if any inconvenience was caused. Our Customer Support has been informed of your situation.</center></p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
+    }else if(score==20){
+        htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback, "+username+"</center></h1><br><p><center>Thank You for choosing this product/service. We will be happy to serve you again! We hope you will continue to use our services in the future! </center></p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
+    }else if(score==30){
+        htmlTemplate="<div style='width:100%;'><header style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'><h1>Example Organization</h1></header><divstyle='color:#333355'><article><h1><center>Thank you for your feedback, "+username+"</center></h1><br><p><center>We are extremely sorry for the inconvenience caused. We have emailed our Customer Support. They will get back to you shortly.</center></p></article></div><footer style='padding:1em;color:orange;background-color:rgb(246,250,250);clear:left;text-align:center;'>Copyright&copy;Example Organization</footer></div>";
+    }
+    var jsonbody={
+        "to": "",
+        "from": "example@organization.com",
+        "fromName": "Example",
+        "sub": "Feedback Response for Example Organization",
+        "text": "Feedback Response for Example Organization",
+        "html": ""
+      };
+
+    jsonbody.to=emailid;
+    jsonbody.html=htmlTemplate;
+    var bodyString = JSON.stringify(jsonbody);
+    var headers = {
+        'Content-Type': 'application/json',
+        'Authorization': AUTH2,
+        'X-Hasura-User-Id': '1',
+        'X-Hasura-User-Role' :'admin'
+    };
+
+    var options = {
+        url: 'https://notify.flub75.hasura-app.io/v1/send/email',
+        method: 'POST',
+        headers: headers,
+        body: bodyString
+    }
+
+    var r= request(options, function (error, response, body) {
+      if(!error && response.statusCode == 200){
+        console.log(body);
+        res.status(200).end(body);
+        r.abort();
+      }
+      else{
+        if(response===undefined||response===null){
+          res.status(500).end('Some error ocurred connecting to Hasura\'s Notify: '+error);
+          r.abort();
+        }
+        else{
+        res.status(500).end('some error ocurred sending an email: '+error+' statusCode:', response.statusCode);
+        r.abort();
+      }
+      }
+    });
+    console.log("\n*****\nSent email to:\n"+emailid+"\n*****\n");
+  }
+}
+updateTable(sendEmail);
+});
+
+//First Endpoint which will return Response:
 app.post('/input',function(req,res){
   var username=req.body.username;
   var type=req.body.type;
@@ -580,7 +783,6 @@ app.post('/input',function(req,res){
     }//else of Array==null
   }//end of if(type==..)
   else{
-    
     res.status(400).end('Incorrect request type Headers');
   }
   }//end of else of if(username===undefined|| ...)

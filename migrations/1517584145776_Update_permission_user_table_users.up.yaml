@@ -1,0 +1,10 @@
+- args:
+    permission:
+      columns:
+      - counts
+      - user_id
+      - user_hash
+      filter: {}
+    role: user
+    table: users
+  type: create_update_permission
