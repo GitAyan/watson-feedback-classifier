@@ -25,8 +25,8 @@ The organization needs only the important feedback emails which contain issues a
 
 
 ## What does it use?
-[Hasura](https://hasura.io)
-[Watson API](https://www.ibm.com/watson/developercloud/natural-language-understanding/api)
+- [Hasura](https://hasura.io)
+- [Watson API](https://www.ibm.com/watson/developercloud/natural-language-understanding/api)
 
 ### How do I use it?
  1. Install [hasura CLI](https://docs.hasura.io/0.15/manual/install-hasura-cli.html)
