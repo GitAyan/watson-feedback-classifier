@@ -62,4 +62,4 @@ Inside microservices/api/src, server.js is where you want to start modifying the
 If you are using any extra packages, just add them to microservices/api/src/package.json and they will be "npm installed" during the Docker build.
 
 ## Support
-If you happen to get stuck anywhere, please mail at <>. Alternatively, if you find a bug, you can raise an issue [here]().
+If you happen to get stuck anywhere, please mail at endecipher@gmail.com . Alternatively, if you find a bug, you can raise an issue [here](https://github.com/issues).
