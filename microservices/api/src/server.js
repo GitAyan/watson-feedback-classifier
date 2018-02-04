@@ -14,8 +14,8 @@ app.use(cookieParser());
 //For Watson Integration
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-  "username": "5e36b468-e888-470c-808f-2e46d8f4c30d",// process.env.WAPI_USERNAME,
-  "password": "musFNjTDKWhC",//process.env.WAPI_PASSWORD,
+  "username": process.env.WAPI_USERNAME,
+  "password": process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
 
@@ -23,10 +23,10 @@ var natural_language_understanding = new NaturalLanguageUnderstandingV1({
 For Data updatation, You can create a user using AUTH API in the console and update
   permissions of all tables to be modified by that user. AUTH1 is the Logged in User's token.
 */
-var AUTH1='Bearer '+"3a8f562806141c85bcffde5c029219e521d2fe652c7d851f";//process.env.AUTH_TOKEN;
+var AUTH1='Bearer '+process.env.AUTH_TOKEN;
 
 //For Admin Token to send Emails
-var AUTH2='Bearer '+"dc0a7c3b83455348f19a9f299d5054291435bea5ef57b8c0";//process.env.AUTH_ADMIN_TOKEN;
+var AUTH2='Bearer '+process.env.AUTH_ADMIN_TOKEN;
 
 //Global Array to hold information of users in Sample Table
 var SampleArray=null;
