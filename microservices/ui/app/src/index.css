@@ -1,5 +1,81 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+/* body starts */
+@keyframes example {
+    0% {background-color: rgb(231, 241, 241);}
+    50% {background-color: rgb(177, 238, 236);}
+    100%{background-color: rgb(231, 241, 241);}
+}
+body{
+    animation: 10s ease example infinite;
+}
+/* Navbar section starts */
+#navbar{
+border-bottom: 2px solid #1FE49C;
+}
+#navbar-brand{
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    -webkit-text-stroke: 1px;
+    -webkit-text-stroke-color: #1FE49C;
+}
+/* homepage card and form div */
+#homepage-cardform-div{
+    margin-top: 120px;
+}
+/* homepage card starts*/
+#homepage-card{
+    margin-top: 30px;
+}
+#homepage-card  .card-body h5{
+    font-size: 24px;
+    color:rgb(0, 140, 255);
+}
+#homepage-card  .card-body .card-text{
+    font-size: 16px;
+    font-weight: 600;
+    color: rgb(72, 73, 75);
+}
+/* Signin form starts */
+.forms-title{
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 10px 0;
+    font-size: 28px;
+    font-weight: bold;
+}
+.form-label{
+    color: rgb(248, 100, 2) ;
+}
+.form-btn{
+display: flex;
+justify-content: center;
+padding-top: 5px;
+}
+#signoutbtn{
+    color:white;
+    border-color: white;
+    font-weight: 500;
+}
+#signoutbtn:hover{
+    color:black;
+    background-color: white;
+}
+/*feedback catorgories list*/
+#catagories-list{
+    margin-top: 30px;
+}
+#cat-list-item-0{
+    font-size: 24px;
+    font-weight: bold;
+    color: #1FE49C;
+}
+/*temporary css for feedback*/
+#feedback-card-form{
+    margin-top: 50px;
+}
+#feedback-text{
+    height: 170px;
+}
+#feedback-card{
+    margin-top: 33px !important;
 }
