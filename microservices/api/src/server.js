@@ -1,5 +1,3 @@
-//https://api.flub75.hasura-app.io
-//require('dotenv').config();
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
@@ -16,52 +14,29 @@ app.use(cookieParser());
 //For Watson Integration
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-  "username": process.env.WAPI_USERNAME,
-  "password": process.env.WAPI_PASSWORD,
+  "username": "5e36b468-e888-470c-808f-2e46d8f4c30d",// process.env.WAPI_USERNAME,
+  "password": "musFNjTDKWhC",//process.env.WAPI_PASSWORD,
   'version_date': '2017-02-27'
 });
-//For Data updatation
-var AUTH1='Bearer '+process.env.AUTH_TOKEN;
-//For Admin Token to send Emails
-var AUTH2='Bearer '+process.env.AUTH_ADMIN_TOKEN;
-//Global Array to hold counts of user
-var Array=null;
-var SampleArray=null;
-var posFeedBack=0, negFeedBack=0;
-//Demo Response for Front-End
-var finalresponse={
-  "usage": {
-    "text_units": 1,
-    "text_characters": 1430,
-    "features": 1
-  },
-  "retrieved_url": "https://www.ibm.com/us-en/",
-  "language": "en",
-  "categories": [
-    {
-      "score": 0.889723,
-      "label": "/travel/tourist destinations/united kingdom"
-    },
-    {
-      "score": 0.500328,
-      "label": "/art and entertainment"
-    },
-    {
-      "score": 0.387755,
-      "label": "/technology and computing/internet technology/social network"
-    }
-  ]
-};
 
+/*
+For Data updatation, You can create a user using AUTH API in the console and update
+  permissions of all tables to be modified by that user. AUTH1 is the Logged in User's token.
+*/
+var AUTH1='Bearer '+"3a8f562806141c85bcffde5c029219e521d2fe652c7d851f";//process.env.AUTH_TOKEN;
+
+//For Admin Token to send Emails
+var AUTH2='Bearer '+"dc0a7c3b83455348f19a9f299d5054291435bea5ef57b8c0";//process.env.AUTH_ADMIN_TOKEN;
+
+//Global Array to hold information of users in Sample Table
+var SampleArray=null;
+
+//Global Counters to hold the count of incoming +ve/-ve feedback
+var posFeedBack=0, negFeedBack=0;
+
+//Home
 app.get('/',function(req,res){
   res.status(200).send("IBM Watson nodeJS.");
-});
-
-
-//GET Demo Url
-app.get('/ibm/demo',function(req,res){
-  res.setHeader('Content-Type','application/json');
-  res.status(200).end(JSON.stringify(finalresponse));
 });
 
 //Get +/- Count for Feedback
@@ -76,56 +51,7 @@ app.get('/getcounts',function(req,res){
   res.status(200).end(JSON.stringify(jsonso));
 });
 
-//Get Array of Counts
-app.get('/getarray',function(req,res){
-  if(Array!=null){
-    res.status(200).send(JSON.stringify(Array));
-  }
-  else{
-  var bodyString = JSON.stringify({
-    "type": "select",
-    "args": {
-        "table": "users",
-        "columns": [
-            "*"
-        ]
-    }
-});
-var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': AUTH1
-};
-
-var options = {
-    url: 'https://data.flub75.hasura-app.io/v1/query',
-    method: 'POST',
-    headers: headers,
-    body: bodyString
-}
-
-var r= request(options, function (error, response, body) {
-  if(!error && response.statusCode == 200){
-    Array=JSON.parse(body);
-    console.log(Array);
-    res.status(200).send(JSON.stringify(Array));
-    r.abort();
-  }
-  else{
-    if(response===undefined||response===null){
-      res.status(500).end('Some error ocurred connecting to Hasura: '+error);
-      r.abort();
-    }
-    else{
-    res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
-    r.abort();
-  }
-  }
-});
-}
-});
-
-
-//Endpoint for Gathering Negative feedback.
+//Endpoint for Gathering Negative feedback using DATA API
 app.get('/getneg',function(req,res){
   var bodyString = JSON.stringify({
     "type": "select",
@@ -165,133 +91,6 @@ var r= request(options, function (error, response, body) {
 });
 });
 
-
-app.get('/updatearray/:username/:counts/:admintoken',function(req,res){
-  var username=req.params.username;
-  var counts=req.params.counts;
-  var admintoken=req.params.admintoken;
-  var jsonso={
-    "type": "update",
-    "args": {
-        "table": "users",
-        "where": {
-            "user_hash": {
-                "$eq": ""
-            }
-        },
-        "$set": {
-            "counts": ""
-        }
-    }
-};
-jsonso.args.where.user_hash.$eq=username;
-jsonso.args.$set.counts=counts;
-
-if(admintoken=='update' && Array!=null){
-for(var item in Array){
-  console.log(item);
-  if(Array[item].user_hash==username){
-    if(Array[item].counts==counts){
-      var bodyString = JSON.stringify(jsonso);
-      var headers = {
-          'Content-Type': 'application/json',
-          'Authorization': AUTH1
-      };
-      var options = {
-          url: 'https://data.flub75.hasura-app.io/v1/query',
-          method: 'POST',
-          headers: headers,
-          body: bodyString
-      }
-
-      var r= request(options, function (error, response, body) {
-        if(!error && response.statusCode == 200){
-          console.log(body);
-          res.status(200).send("Updated "+username+"\'s count to "+counts);
-          r.abort();
-        }
-        else{
-          if(response===undefined||response===null){
-            res.status(500).end('Some error ocurred connecting to Hasura: '+error);
-            r.abort();
-          }
-          else{
-          res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
-          r.abort();
-          }
-        }
-      });
-
-    }else{
-      res.status(200).end("Bad Counts Request");
-    }
-  }else{
-    res.status(200).end("Bad Username Request");
-  }
-  }
-}else if(admintoken==process.env.ADMIN_TOKEN && Array!=null){
-  var bodyString = JSON.stringify(jsonso);
-  var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': AUTH1
-  };
-  var options = {
-      url: 'https://data.flub75.hasura-app.io/v1/query',
-      method: 'POST',
-      headers: headers,
-      body: bodyString
-  }
-
-  var r= request(options, function (error, response, body) {
-    if(!error && response.statusCode == 200){
-      console.log(body);
-      res.status(200).send("Updated "+username+"\'s count to "+counts);
-      r.abort();
-    }
-    else{
-      if(response===undefined||response===null){
-        res.status(500).end('Some error ocurred connecting to Hasura: '+error);
-        r.abort();
-      }
-      else{
-      res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
-      r.abort();
-    }
-    }
-  });
-
-  for(var item in Array){
-    if(Array[item].user_hash==username){
-      Array[item].counts=counts;
-    }
-  }
-
-}else{
-  res.status(400).send("Bad Request! Either /getarray or invalid token.");
-}
-});
-
-//POST Demo URL
-app.post('/ibm/demo/post',function(req,res){
-  var username=req.body.username;
-  var type=req.body.type;
-  var string=req.body.string;
-  if(username===undefined || type===undefined || string===undefined){
-    res.status(400).end("Bad Request. Check Body Parameters carefully.");
-  }else{
-    username=username.toString().toLowerCase();
-    type=type.toString();
-    string=string.toString();
-    if((type=='url'||type=='text')){
-      res.setHeader('Content-Type','application/json');
-      res.status(200).end(JSON.stringify(finalresponse));
-    }else{
-      res.status(400).end("Bad Request. Check Body Parameters carefully. Especially Type.");
-    }
-  }
-});
-
-
 //Login Endpoint
 app.post('/login',function(req,res){
   var username=req.body.username;
@@ -324,7 +123,6 @@ app.post('/login',function(req,res){
       res.status(200).end(JSON.stringify(jsonso));
     }
   }else{ //SampleArray!=Null If case ends
-
     var bodyString = JSON.stringify({
         "type": "select",
         "args": {
@@ -385,25 +183,10 @@ app.post('/login',function(req,res){
       }
       }
     });
-
-  }//If Sample Array Null ELSE ends
-
-});
-/*
-app.post('/senddemo',function(req,res){
-
-  {
-  "username":"sam",
-  "emailid":"facebook@gmail.com",
-  "score":"10/20/30"
   }
-
-  var username=req.body.username;
-  var emailid=req.body.emailid;
-  var score=req.body.score;
-
 });
-*/
+
+//Second endpoint to send an email according to score and update feedback table for -ve responses
 app.post('/sendemail',function(req,res){
   var username=req.body.username;
   var user_id=req.body.user_id;
@@ -412,15 +195,15 @@ app.post('/sendemail',function(req,res){
   var score=req.body.score;
   console.log(feedbacktext+"=="+score);
 /*
+  Body Of Request:
 {
- "username":"sam",
- "user_id":"1",
- "emailid":"endecipher@gmail.com",
- "feedbacktext":"",
- "score":""
+    "user_name": "<enter-username>",
+    "user_id": "<enter-user-id>",
+    "email_id": "<some-email>@<domain-name>.com",
+    "feedbacktext":"<some-feedback>",
+    "score":"<refer-front-end-for-score>"
 }
 */
-
 var updateTable=function(callback){
   var status2=undefined;
   if(score==20){
@@ -430,6 +213,7 @@ var updateTable=function(callback){
   }
   else{
      //Change Body String for Insert in Feedback Table.
+    negFeedBack++;
     var jsonso={
     "type": "insert",
     "args": {
@@ -450,7 +234,6 @@ var updateTable=function(callback){
     else {
       jsonso.args.objects[0].priority="low";
     }
-
     var bodyString = JSON.stringify(jsonso);
     var headers = {
         'Content-Type': 'application/json',
@@ -462,12 +245,10 @@ var updateTable=function(callback){
         headers: headers,
         body: bodyString
     }
-
     var r= request(options, function (error, response, body) {
       if(!error && response.statusCode == 200){
         console.log(body);
         status2=200;
-        negFeedBack++;
         callback(status2);
         r.abort();
       }
@@ -483,9 +264,7 @@ var updateTable=function(callback){
       }
     });
   }
-
 }
-
 
 var sendEmail=function(status2){
   if(status2!=200){
@@ -550,7 +329,202 @@ var sendEmail=function(status2){
 updateTable(sendEmail);
 });
 
-//First Endpoint which will return Response:
+app.post('/input',function(req,res){
+  if(SampleArray==null){
+    res.status(400).end("Not Logged In.");
+  }else{
+    var username=req.body.username;
+    var type=req.body.type;
+    var string=req.body.string;
+    if(username===undefined || type===undefined || string===undefined){
+      res.status(400).end("Bad Request. Check Body Parameters carefully.");
+    }else{
+      username=username.toString().toLowerCase();
+      type=type.toString();
+      string=string.toString();
+      if((type=='url'||type=='text'||type=='html')){
+        var pos=null;
+        for(var item in SampleArray){
+          console.log(item);
+          if(SampleArray[item].user_name==username){
+            pos=item;
+            console.log(SampleArray[item].user_name);
+            if(type=='url'){
+                var parameters={
+                    'url': '',
+                    'language':'en',
+                    'features': {
+                      'entities': {
+                        'emotion': true,
+                        'sentiment': true,
+                        'limit': 10
+                      },
+                      'keywords': {
+                        'emotion': true,
+                        'sentiment': true,
+                        'limit': 10
+                      },
+                      'categories': {}
+                    }
+                  }
+                parameters.url=string;
+              }else if(type=='text'){
+                var parameters={
+                    'text': '',
+                    'language':'en',
+                    'features': {
+                      'entities': {
+                        'emotion': true,
+                        'sentiment': true,
+                        'limit': 10
+                      },
+                      'keywords': {
+                        'emotion': true,
+                        'sentiment': true,
+                        'limit': 10
+                      },
+                      'categories': {}
+                    }
+                  }
+                parameters.text=string;
+              }else if(type=='html'){
+                var parameters={
+                    'html': '',
+                    'language':'en',
+                    'features': {
+                      'entities': {
+                        'emotion': true,
+                        'sentiment': true,
+                        'limit': 10
+                      },
+                      'keywords': {
+                        'emotion': true,
+                        'sentiment': true,
+                        'limit': 10
+                      },
+                      'categories': {}
+                    }
+                  }
+                parameters.html=string;
+              }
+              natural_language_understanding.analyze(parameters, function(err, resp) {
+                    if (err)
+                      res.status(500).end('Connection to Watson error: '+err);
+                    else
+                      console.log(JSON.stringify(resp, null, 2));
+                      console.log("\n><><><><><><><><\n");
+                      res.setHeader('Content-Type','application/json');
+                      res.end(JSON.stringify(resp, null, 2));
+              });
+          }//if ==username
+
+        }//for loop ends
+        if(pos==null){
+        console.log("Invalid Credentials.\n");
+        res.status(400).end("Something went wrong. Invalid Credentials. Please check Body of request.");
+        }
+    }//end of if(type==..)
+    else{
+      res.status(400).end('Incorrect Request Body.');
+    }
+    }//end of else of if(username===undefined|| ...)
+  }//end of else of if(SampleArray==null)
+  });
+
+  //Demo Response for Front-End
+  var finalresponse={
+    "usage": {
+      "text_units": 1,
+      "text_characters": 50,
+      "features": 3
+    },
+    "language": "en",
+    "keywords": [
+      {
+        "text": "wrong color",
+        "sentiment": {
+          "score": -0.67618,
+          "label": "negative"
+        },
+        "relevance": 0.998457,
+        "emotion": {
+          "sadness": 0.594096,
+          "joy": 0.010469,
+          "fear": 0.215117,
+          "disgust": 0.132705,
+          "anger": 0.222564
+        }
+      },
+      {
+        "text": "shoes",
+        "sentiment": {
+          "score": -0.852465,
+          "label": "negative"
+        },
+        "relevance": 0.887692,
+        "emotion": {
+          "sadness": 0.632704,
+          "joy": 0.009755,
+          "fear": 0.225905,
+          "disgust": 0.292258,
+          "anger": 0.188651
+        }
+      }
+    ],
+    "entities": [],
+    "categories": [
+      {
+        "score": 0.707193,
+        "label": "/style and fashion/footwear/shoes"
+      },
+      {
+        "score": 0.692858,
+        "label": "/art and entertainment/visual art and design/design"
+      },
+      {
+        "score": 0.0591286,
+        "label": "/business and industrial"
+      }
+    ]
+  };
+
+  //Demo URL For /input endpoint for front end devs to try
+  app.post('/ibm/demo/post',function(req,res){
+    var username=req.body.username;
+    var type=req.body.type;
+    var string=req.body.string;
+    if(username===undefined || type===undefined || string===undefined){
+      res.status(400).end("Bad Request. Check Body Parameters carefully.");
+    }else{
+      username=username.toString().toLowerCase();
+      type=type.toString();
+      string=string.toString();
+      if((type=='url'||type=='text')){
+        res.setHeader('Content-Type','application/json');
+        res.status(200).end(JSON.stringify(finalresponse));
+      }else{
+        res.status(400).end("Bad Request. Check Body Parameters carefully. Especially Type.");
+      }
+    }
+  });
+
+  var port = 8080;
+  app.listen(port, function () {
+    console.log(`App listening on port ${port}!`);
+  });
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------------------------------------
+---------------------Task 3 Part 1------Deprecated Code-------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
+
+var Array=null; //To hold Counts and user info
+
+-----------------------------Input Endpoint to display Categories and other info.----------------------
 app.post('/input',function(req,res){
   var username=req.body.username;
   var type=req.body.type;
@@ -788,7 +762,164 @@ app.post('/input',function(req,res){
   }//end of else of if(username===undefined|| ...)
 });
 
-var port = 8080;
-app.listen(port, function () {
-  console.log(`App listening on port ${port}!`);
+
+
+
+------------------To Update Counts of Users------------------
+
+app.get('/updatearray/:username/:counts/:admintoken',function(req,res){
+  var username=req.params.username;
+  var counts=req.params.counts;
+  var admintoken=req.params.admintoken;
+  var jsonso={
+    "type": "update",
+    "args": {
+        "table": "users",
+        "where": {
+            "user_hash": {
+                "$eq": ""
+            }
+        },
+        "$set": {
+            "counts": ""
+        }
+    }
+};
+jsonso.args.where.user_hash.$eq=username;
+jsonso.args.$set.counts=counts;
+
+if(admintoken=='update' && Array!=null){
+for(var item in Array){
+  console.log(item);
+  if(Array[item].user_hash==username){
+    if(Array[item].counts==counts){
+      var bodyString = JSON.stringify(jsonso);
+      var headers = {
+          'Content-Type': 'application/json',
+          'Authorization': AUTH1
+      };
+      var options = {
+          url: 'https://data.flub75.hasura-app.io/v1/query',
+          method: 'POST',
+          headers: headers,
+          body: bodyString
+      }
+
+      var r= request(options, function (error, response, body) {
+        if(!error && response.statusCode == 200){
+          console.log(body);
+          res.status(200).send("Updated "+username+"\'s count to "+counts);
+          r.abort();
+        }
+        else{
+          if(response===undefined||response===null){
+            res.status(500).end('Some error ocurred connecting to Hasura: '+error);
+            r.abort();
+          }
+          else{
+          res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
+          r.abort();
+          }
+        }
+      });
+
+    }else{
+      res.status(200).end("Bad Counts Request");
+    }
+  }else{
+    res.status(200).end("Bad Username Request");
+  }
+  }
+}else if(admintoken==process.env.ADMIN_TOKEN && Array!=null){
+  var bodyString = JSON.stringify(jsonso);
+  var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': AUTH1
+  };
+  var options = {
+      url: 'https://data.flub75.hasura-app.io/v1/query',
+      method: 'POST',
+      headers: headers,
+      body: bodyString
+  }
+
+  var r= request(options, function (error, response, body) {
+    if(!error && response.statusCode == 200){
+      console.log(body);
+      res.status(200).send("Updated "+username+"\'s count to "+counts);
+      r.abort();
+    }
+    else{
+      if(response===undefined||response===null){
+        res.status(500).end('Some error ocurred connecting to Hasura: '+error);
+        r.abort();
+      }
+      else{
+      res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
+      r.abort();
+    }
+    }
+  });
+
+  for(var item in Array){
+    if(Array[item].user_hash==username){
+      Array[item].counts=counts;
+    }
+  }
+
+}else{
+  res.status(400).send("Bad Request! Either /getarray or invalid token.");
+}
 });
+
+
+
+-------------------------------To get Array of Counts of Users--------------------
+
+app.get('/getarray',function(req,res){
+  if(Array!=null){
+    res.status(200).send(JSON.stringify(Array));
+  }
+  else{
+  var bodyString = JSON.stringify({
+    "type": "select",
+    "args": {
+        "table": "users",
+        "columns": [
+            "*"
+        ]
+    }
+});
+var headers = {
+    'Content-Type': 'application/json',
+    'Authorization': AUTH1
+};
+
+var options = {
+    url: 'https://data.flub75.hasura-app.io/v1/query',
+    method: 'POST',
+    headers: headers,
+    body: bodyString
+}
+
+var r= request(options, function (error, response, body) {
+  if(!error && response.statusCode == 200){
+    Array=JSON.parse(body);
+    console.log(Array);
+    res.status(200).send(JSON.stringify(Array));
+    r.abort();
+  }
+  else{
+    if(response===undefined||response===null){
+      res.status(500).end('Some error ocurred connecting to Hasura: '+error);
+      r.abort();
+    }
+    else{
+    res.end('some error ocurred: '+error+' statusCode:', response.statusCode);
+    r.abort();
+  }
+  }
+});
+}
+});
+*/
