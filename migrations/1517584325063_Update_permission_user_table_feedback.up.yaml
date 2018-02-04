@@ -1,0 +1,11 @@
+- args:
+    permission:
+      columns:
+      - feedback_text
+      - priority
+      - feedback_id
+      - user_id
+      filter: {}
+    role: user
+    table: feedback
+  type: create_select_permission

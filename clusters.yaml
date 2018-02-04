@@ -1,0 +1,7 @@
+- alias: hasura
+  config:
+    configmap: controller-conf
+    namespace: flub75-hasura
+  data: null
+  kubeContext: flub75
+  name: flub75

@@ -1,0 +1,8 @@
+- args:
+    sql: CREATE TABLE "sample"("user_id" bigserial NOT NULL, "user_name" text NOT
+      NULL, "email_id" text NOT NULL, "password" text NOT NULL, PRIMARY KEY ("user_id","user_name")
+      )
+  type: run_sql
+- args:
+    name: sample
+  type: add_existing_table_or_view
