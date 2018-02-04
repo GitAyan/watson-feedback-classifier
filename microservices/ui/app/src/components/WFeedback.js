@@ -18,7 +18,7 @@ class Catlist extends Component {
   }
 }
 
-/* class Keywords extends Component {
+class Keywords extends Component {
   render() {
     return (
       <Table dark>
@@ -49,7 +49,7 @@ class Catlist extends Component {
       </Table>
     );
   }
-} */
+}
 
 
 class WFeedback extends Component {
@@ -111,7 +111,7 @@ class WFeedback extends Component {
           <div className="col-10 offset-1 my-auto col-sm-5" id="feedback-card">
           <WCard text={text} title={title} />
           </div>
-          <div className="col-10 col-sm-5">
+          <div className="col-10 offset-1 offset-sm-0 col-sm-5">
             <Form>
               {/* <Label
                 for="form-title"
