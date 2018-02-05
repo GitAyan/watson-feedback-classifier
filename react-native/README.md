@@ -1,0 +1,1 @@
+## refer README-ReactNative.md of https://github.com/GitAyan/watson-feedback-classifier/blob/master/README-ReactNative.md

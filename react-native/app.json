@@ -1,0 +1,8 @@
+{
+  "expo": {
+    "sdkVersion": "23.0.0",
+    "android": {
+      "package": "wrk.wrk"
+    }
+  }
+}
