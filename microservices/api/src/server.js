@@ -197,9 +197,9 @@ app.post('/sendemail',function(req,res){
 /*
   Body Of Request:
 {
-    "user_name": "<enter-username>",
+    "username": "<enter-username>",
     "user_id": "<enter-user-id>",
-    "email_id": "<some-email>@<domain-name>.com",
+    "emailid": "<some-email>@<domain-name>.com",
     "feedbacktext":"<some-feedback>",
     "score":"<refer-front-end-for-score>"
 }
