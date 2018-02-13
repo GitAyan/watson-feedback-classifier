@@ -61,7 +61,13 @@ export default class AuthScreen extends React.Component {
             isLoading: false
           });
           Alert.alert("Network Error", "Check your internet connection")
-        } else {
+        } else if(resp.status === 503){
+          this.setState({
+            isLoading: false
+          });
+          Alert.alert("Error", "We are having issues connecting. Please try again later.")
+        }        
+        else {
           this.setState({
             isLoading: false
           });
