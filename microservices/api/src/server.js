@@ -441,6 +441,7 @@ app.post('/input',function(req,res){
 
   //Demo Response for Front-End
   var finalresponse={
+    
     "usage": {
       "text_units": 1,
       "text_characters": 50,
