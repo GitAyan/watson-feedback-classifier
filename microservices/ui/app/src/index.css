@@ -19,22 +19,20 @@ border-bottom: 2px solid #1FE49C;
     -webkit-text-stroke-color: #1FE49C;
 }
 /* homepage card and form div */
-#homepage-cardform-div{
-    margin-top: 120px;
+#homepage-div{
+    margin-top: 80px;
 }
-/* homepage card starts*/
-#homepage-card{
-    margin-top: 30px;
+#signin-form-div{
+    padding: 20px;
+    padding-bottom: 40px;
+    border-radius: 10px;
+    border: 2px solid rgb(2, 150, 248);
+    background-color: rgb(36, 35, 35);
 }
-#homepage-card  .card-body h5{
-    font-size: 24px;
-    color:rgb(0, 140, 255);
+#signin-form-btn{
+    margin-top: 15px;
 }
-#homepage-card  .card-body .card-text{
-    font-size: 16px;
-    font-weight: 600;
-    color: rgb(72, 73, 75);
-}
+
 /* Signin form starts */
 .forms-title{
     display: flex;
@@ -44,7 +42,7 @@ border-bottom: 2px solid #1FE49C;
     font-weight: bold;
 }
 .form-label{
-    color: rgb(248, 100, 2) ;
+    color: rgb(2, 150, 248);
     font-size: 20px;
     font-weight: bold;
     margin-top: 10px;
@@ -54,6 +52,7 @@ display: flex;
 justify-content: center;
 padding-top: 5px;
 }
+/*feedback page starts*/
 #signoutbtn{
     color:white;
     border-color: white;
@@ -62,6 +61,17 @@ padding-top: 5px;
 #signoutbtn:hover{
     color:black;
     background-color: white;
+}
+#feedback-card-form{
+    margin-top: 50px;
+    margin-bottom: 40px;
+}
+#feedback-card{
+    margin-bottom: 30px;
+}
+
+#feedback-text{
+    height: 150px;
 }
 /*feedback catorgories list*/
 #catagories-list{
@@ -72,13 +82,77 @@ padding-top: 5px;
     font-weight: bold;
     color: #1FE49C;
 }
-/*temporary css for feedback*/
-#feedback-card-form{
-    margin-top: 50px;
+#keywords-table{
+    margin-top: 20px;
+    border-radius: 3px;
+    background-color: white;
 }
-#feedback-text{
-    height: 170px;
+#keywords-table legend{
+    padding-left: 10px;
+    color:#1FE49C;
+    font-weight: bold;
 }
-#feedback-card{
-    margin-top: 53px !important;
+#keywords-table.table thead th{
+    border-top: 2px solid #dee2e6;
+}
+#keywords-table tr > th{
+    color: rgb(2, 150, 248);
+}
+#keywords-table tr:nth-child(even){
+    font-weight: 500;
+    color: rgb(4, 119, 139);
+}
+#keywords-table tr:nth-child(odd){
+    font-weight: 500;
+    color:rgb(49, 196, 127);
+}
+.results-hidden{
+    display: none;
+}
+.results-visible{
+    display: block;
+}
+#replycard{
+    margin-top: 130px;
+}
+#reply-backbtn{
+    margin-top: 30px;
+    margin-right: 10px;
+    font-weight: 600;
+    float: right;
+    padding-left:30px;
+    padding-right: 30px; 
+    color:white;
+    border-color: white;
+    background-color: #343a40;
+}
+#reply-backbtn:hover{
+    color:black;
+    background-color: white;
+}
+@media (max-width:450px) {
+    #navbar-brand{
+        font-size: 23px;
+    }
+    #signoutbtn{
+        font-size: 14px;
+        margin-left: -20px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    #navbar li.ml-auto.nav-item{
+        margin-left: 0 !important;
+        text-align: left;
+    }
+    .form-btn{
+        display: block;
+        
+    }
+    .form-btn button{
+        margin-bottom: 15px;
+        margin-left: 25% !important;
+    }
+    button#show-result{
+        margin-left: 27% !important;
+    }
 }

@@ -1,19 +1,14 @@
 import React, { Component } from "react";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import $ from "jquery";
-import WNavbar, { WCard } from "./WConstComps";
-import { cardData } from "./constdata";
+import WNavbar from "./WConstComps";
 
 class WHomepage extends Component {
   constructor(props) {
     super(props);
     this.sendCred = this.sendCred.bind(this);
-    this.state = {
-      id: "",
-      username: "",
-      email: ""
-    };
   }
+//send user details to verify if user is registered or not.
   sendCred(e) {
     e.preventDefault();
     let username = $("#signin-username").val();
@@ -22,42 +17,43 @@ class WHomepage extends Component {
       username: username,
       password: password
     });
-    fetch("https://api.flub75.hasura-app.io/login", {
-      method: "POST", // or 'PUT'
-      body: data,
-      headers: new Headers({
-        "Content-Type": "application/json"
+    if(username.length > 0 && password.length > 0) {
+      $.ajax({
+        type: "POST",
+        url: "https://api.flub75.hasura-app.io/login",
+        data: data,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-    })
-      .then(res => res.json())
-      .then(res => {
-        let id = res.id;
-        let username = res.username;
-        let email = res.email;
-        let passData = [id, username, email];
-        this.setState({
-          id,
-          username,
-          email
-        });
-        //passing data upstream to be implemented
-        //this.props.userInfo(passData);
-        return;
-      })//fix the bug alert is being shown even if authentication was valid
-      .catch(error => alert("Username/password is incorrect"));
+        .done(res => {
+          let id = res.user_id;
+          let username = res.user_name;
+          let email = res.email_id;
+          if(username !== undefined && username !== null) {
+            sessionStorage.setItem("username",username);
+            sessionStorage.setItem("email",email);
+            sessionStorage.setItem("id",id);
+          }
+          //set email in the app component state
+          this.props.SetEmail(email);
+          //verify the email in app component state and sessionstorage to verify and login user
+          this.props.AppLogin();
+        })
+        .fail(error => alert("username/password is invalid"));
+    }else {
+      alert("please enter username and password")
+    }
+   
   }
 
   render() {
-    let { title, text } = cardData.homepage;
-    return (
+      return (
       <div>
         <WNavbar />
-        <div className="container-fluid" id="homepage-cardform-div">
+        <div className="container-fluid" id="homepage-div">
           <div className="row">
-            <div className="offset-1 col-10 col-sm-6" id="homepage-card">
-              <WCard title={title} text={text} />
-            </div>
-            <div className="offset-1 col-10 col-sm-3" id="homepage-signin-form">
+            <div className="col-10 col-sm-6 col-md-4 offset-1 offset-sm-3 offset-md-4" id="homepage-signin-form">
               <div id="signin-form-div">
                 <Form>
                   <Label for="form-title" className="form-label forms-title">

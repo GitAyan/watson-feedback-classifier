@@ -1,173 +1,283 @@
-import React, { Component } from "react";
-import { Button, Form, FormGroup, Label, Input,ListGroup, ListGroupItem,Table } from "reactstrap";
+import React, {Component} from "react";
+import { NavItem,Button,Form,FormGroup,Label,Input,ListGroup,ListGroupItem,Table} from "reactstrap";
 import $ from 'jquery';
-import WNavbar,{WCard} from "./WConstComps";
+import WNavbar, {WCard} from "./WConstComps";
 import {cardData} from './constdata';
 
-class Catlist extends Component {
-  render() {
-    return (
-      <div>
+//create a list of category items based on the user input and fetch response
+const Catlist = (props) => {
+  return (
+    <div>
+      {props
+        .list
+        .map((el, i) => {
+          return <ListGroupItem key={i} id={`cat-list-item-${i}`}>{el}</ListGroupItem>
+        })
+      }
+    </div>
+  )
+}
+//create a table with all the keywords, emotions and their percentages.
+const Keywords = (props) => {
+  return (
+    <Table responsive id="keywords-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Keyword</th>
+          <th>Relevance</th>
+          <th>Sadness</th>
+          <th>Joy</th>
+          <th>Anger</th>
+          <th>Fear</th>
+          <th>sentiment</th>
+        </tr>
+      </thead>
+      <tbody>
         {
-          this.props.list.map(( el, i )=> {
-            return <ListGroupItem key={i} id={`cat-list-item-${i}`}>{el}</ListGroupItem>
+        props
+          .keywords
+          .map((el, i) => {
+            return (
+              <tr key={i}>
+                <td scope="row">{i + 1}</td>
+                <td>{el[0]}</td>
+                <td>{el[1]}%</td>
+                <td>{el[2]}%</td>
+                <td>{el[3]}%</td>
+                <td>{el[4]}%</td>
+                <td>{el[5]}%</td>
+                <td>{el[6]}</td>
+              </tr>
+            )
           })
         }
-      </div>
-    );
-  }
+      </tbody>
+    </Table>
+  );
 }
-
-class Keywords extends Component {
-  render() {
-    return (
-      <Table dark>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Keyword</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-          </tr>
-        </tbody>
-      </Table>
-    );
-  }
-}
-
 
 class WFeedback extends Component {
- 
+
   constructor(props) {
     super(props);
     this.getResults = this.getResults.bind(this);
+    this.fetchUpdatesState = this.fetchUpdatesState.bind(this);
+    this.logout = this.logout.bind(this);
+    this.sendFeedback = this.sendFeedback.bind(this);
+    this.calScore = this.calScore.bind(this);
     this.state = {
-      list:["Categories"]
+      email: sessionStorage.getItem("email"),
+      list: ["Categories"],
+      keywords: []
     }
   }
+  //get results for the user input to display on clicking "show result" button
   getResults(e) {
     e.preventDefault();
-    let data = JSON.stringify({
-      username: "sathya",
-      password: "sathya"
-    });
-    fetch("https://api.flub75.hasura-app.io/login", {
-      method: "POST", // or 'PUT'
-      body: data,
-      headers: new Headers({
-        "Content-Type": "application/json"
-      })
-    }).catch(err => alert("something went wrong!"));
-    let username = "sathya";
+    let username = sessionStorage.getItem("username");
     let type = "text";
     let userInput = $("#feedback-text").val();
-    let userData = JSON.stringify({
-      username: username,
-      type: type,
-      string: userInput
-    });
-    setTimeout(() => {
-      fetch("https://api.flub75.hasura-app.io/input", {
-      method: 'POST', // or 'PUT'
-      body: userData, 
-      headers: new Headers({
-        'Content-Type': 'application/json'
+    let userData = JSON.stringify({username: username, type: type, string: userInput});
+
+    fetch("https://api.flub75.hasura-app.io/input", {
+        method: 'POST', 
+        body: userData,
+        headers: new Headers({'Content-Type': 'application/json'})
       })
-    }).then(res => res.json())
-    .then(res => {
-      let recievedCat =  res.categories.map(el => {
-        return el.label
+      .then(res => res.json())
+      .then(res => {
+        this.fetchUpdatesState(res);
       })
-      this.setState({
-        list:[this.state.list[0],...recievedCat]
-     })
-    })
-    .catch(error => alert("Something went wrong\nTry again"));
-    }, 500);
+      .catch(error => alert("Something went wrong\nTry again"));
   }
-  render() {
-    let {title,text} = cardData.feedback;
+//update the state with received keywords to display it to the user
+  fetchUpdatesState(res) {
+    let recievedCat = res
+      .categories
+      .map(el => {
+        return el.label
+      });
+    let resKeywords = res.keywords;
+    let keywords = []
+    for (let i = 0; i < resKeywords.length; i++) {
+      let text = resKeywords[i].text;
+      let relevance = Math.ceil(resKeywords[i].relevance * 100);
+      let sadness = Math.ceil(resKeywords[i].emotion.sadness * 100);
+      let joy = Math.ceil(resKeywords[i].emotion.joy * 100);
+      let anger = Math.ceil(resKeywords[i].emotion.anger * 100);
+      let fear = Math.ceil(resKeywords[i].emotion.fear * 100);
+      let sentiment = resKeywords[i].sentiment.label;
+      keywords.push([text,relevance,sadness,joy,anger,fear,sentiment]);
+    }
+    this.setState({
+      list: [
+        this.state.list[0], ...recievedCat
+      ],
+      keywords: keywords
+    })
+    let results = document.getElementById("results");
+    results.classList.remove("results-hidden");
+    results.classList.add("results-visible");
+  }
+//clear the session storage and logout the user
+  logout() {
+      sessionStorage.clear();  
+      this.props.AppLogout();
+  }
+//send feedback input to /input endpoint and pass the response to calScore() to calculate score
+  sendFeedback(e) {
+    e.preventDefault();
+    let username = sessionStorage.getItem("username");
+    let email = sessionStorage.getItem("email");
+    let id = sessionStorage.getItem("id");
+    let type = "text";
+    let userInput = $("#feedback-text").val();
+    let userData = JSON.stringify({username: username, type: type, string: userInput});
+    let data = [id,username,email,userInput];
+
+    fetch("https://api.flub75.hasura-app.io/input", {
+        method: 'POST', 
+        body: userData,
+        headers: new Headers({'Content-Type': 'application/json'})
+      })
+      .then(res => res.json())
+      .then(res => {
+       this.calScore(res,data);
+      })
+      .catch(error => alert("Something went wrong\nTry again"));
+  }
+//calculate the total no. of times the labels has repeated in the response and based on that set score value
+//send the data and score value to /sendemail enpoint where the rest of process will be taken care of.
+  calScore(res,data) {
+    let pos = 0, neg = 0, neu = 0, score = 0;
+    //counting labels from keywords array of response
+    for(let i = 0; i < res.keywords.length; i++) {
+      let label = res.keywords[i].sentiment.label;
+      if(label ===  "positive"){
+        pos++
+      }else if(label === "neutral") {
+        neu++
+      }else {
+       neg++
+      }
+    }
+    //counting labels from entities array of response
+    for(let i = 0; i < res.entities.length; i++) {
+      let label = res.entities[i].sentiment.label;
+      if(label ===  "positive"){
+        pos++
+      }else if(label === "neutral") {
+        neu++
+      }else {
+       neg++
+      }
+    }
+    //setting score value based on certain count conditions
+    if(pos > neg && pos > neu) {
+      score = 20;
+    }else if((neu === pos && neu > neg) || (neu === neg && neu > pos) || (neu > pos && neu >neg)) {
+      score = 10
+    }else if(neg > pos && neg > neu){
+      score = 30
+    }
+    //send data to sendemail endpoint only if score is set and greater than 0.
+    if( score !== 0 ) {
+      let sendData = JSON.stringify({
+        "username": data[1],
+        "user_id": data[0],
+        "emailid": data[2],         
+        "feedbacktext": data[3],
+        "score": score
+      });
+      $.ajax({
+        type: 'POST', 
+        url:"https://api.flub75.hasura-app.io/sendemail",
+        data: sendData,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .done(res => {
+       this.props.FeedSubmit();
+      }).catch( res => alert("feedback not submitted. Try again."))
+    }
+  }
+
+  render() {    
+    //logout button to be passed to navbar
+    const logoutbtn = (
+      <NavItem className="ml-auto">
+        <Button onClick={this.logout} outline  id="signoutbtn">
+          Sign Out
+        </Button>
+      </NavItem>
+    );
+    let {title, text} = cardData.feedback;
     return (
       <div>
-        <WNavbar />
+        <WNavbar logoutbtn={logoutbtn}/>
         <div className="container-fluid">
-        <div className="row"  id="feedback-card-form">
-          <div className="col-10 offset-1 my-auto col-sm-5" id="feedback-card">
-          <WCard text={text} title={title} />
+          <div className="row" id="feedback-card-form">
+            <div className="col-10 offset-1" id="feedback-card">
+              <WCard text={text} title={title}/>
+            </div>
+            <div className="col-10 offset-1 col-sm-6 offset-sm-3 ">
+              <Form>
+                <Label for="form-title" className="form-label forms-title">
+                  Feedback
+                </Label>
+                <FormGroup>
+                  <Label for="username" className="form-label">
+                    Email
+                  </Label>
+                  <Input disabled placeholder={this.state.email}/>
+                </FormGroup>
+                <FormGroup>
+                  <Label for="Feedback" className="form-label">
+                    Your Text
+                  </Label>
+                  <Input
+                    type="textarea"
+                    name="text"
+                    id="feedback-text"
+                    placeholder="Enter Your Text here"/>
+                </FormGroup>
+                <div className="form-btn">
+                  <Button
+                    outline
+                    color="primary"
+                    className="mx-auto"
+                    onClick={this.getResults}
+                    id="show-result">
+                    Show Result
+                  </Button>
+                  <Button
+                    outline
+                    name="show"
+                    color="primary"
+                    className="mx-auto"
+                    onClick={this.sendFeedback}
+                    id="send-feedback">
+                    Send Feedack
+                  </Button>
+                </div>
+              </Form>
+            </div>
           </div>
-          <div className="col-10 offset-1 offset-sm-0 col-sm-5">
-            <Form>
-              {/* <Label
-                for="form-title"
-                className="form-label forms-title"
-                >
-                Get Feedback
-              </Label>
-             <FormGroup>
-                <Label for="username" className="form-label">
-                  Email
-                </Label>
-                <Input
-                  disabled
-                  placeholder="Enter your Username"
-                />
-              </FormGroup> */}
-              <FormGroup>
-                <Label for="Feedback" className="form-label">
-                  Your Text
-                </Label>
-                <Input type="textarea" name="text" id="feedback-text" placeholder="Enter Your Text here" />
-              </FormGroup>
-              <div className="form-btn">
-                <Button
-
-                  outline
-                  color="primary"
-                  className="mx-auto"
-                  onClick={this.getResults}
-                  id="show-result"
-                >
-                  Show Result
-                </Button>
-              {/*   <Button
-   
-                  outline
-                  name="show"
-                  color="primary"
-                  className="mx-auto"
-                  onClick={this.sendFeedback}
-                  id="send-feedback"
-                >
-                  Send Feedack
-                </Button> */}
+          <div className="results-hidden" id="results">
+            <div className="row">
+              <div className="col-10 offset-1">
+                <ListGroup id="catagories-list">
+                  <Catlist list={this.state.list}></Catlist>
+                </ListGroup>
               </div>
-            </Form>           
+              <div className="col-10 offset-1">
+                <Keywords keywords={this.state.keywords}/>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-10 offset-1">
-          <ListGroup id="catagories-list">
-              <Catlist list={this.state.list}></Catlist>
-            </ListGroup>
-          </div>
-        </div>       
-      </div>
       </div>
     );
   }

@@ -7,7 +7,7 @@ import {
   CardBody,
   CardTitle
 } from "reactstrap";
-
+//this component takes title and the text to be displayed inside of card and renders that card
 export class WCard extends Component {
   render() {
     return (
@@ -22,6 +22,7 @@ export class WCard extends Component {
     );
   }
 }
+//this component renders the nav bar with optional signout button
 class WNavbar extends Component {
   render() {
     return (
