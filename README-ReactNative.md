@@ -60,7 +60,7 @@ Handle any obvious errors.
 ## Expo link : https://exp.host/@priyarg/watson 
 * To run expo link download expo on device. click above link and send expo link to your device or scan using expo app.
 
-## Apk link : https://drive.google.com/file/d/1Fnp2JzsPyP5lIpa-j-E7XI-4m6_RfGj4/view?usp=sharing 
+## Apk link : https://drive.google.com/file/d/1rwAk26BrfHb8Zex1HdvWxBZnJZiWcoa0/view?usp=sharing
 * Download apk on device.  Open the link on device.
 
 ## Github link : https://github.com/priyarg/ProjectWatson

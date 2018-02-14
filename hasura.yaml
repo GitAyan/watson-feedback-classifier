@@ -1,5 +1,6 @@
-description: A basic hasura project with a simple nodejs-express app running on it
+description: A concept project which aims to segregate and analyse user feedback/input
+  and act on the nature of the feedback given.
 keywords: javascript, nodejs, express, getting-started, node
 media: {}
-name: hello-nodejs-express
+name: feedback-classifier
 platformVersion: v0.15.3

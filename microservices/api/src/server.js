@@ -31,6 +31,12 @@ var AUTH2='Bearer '+process.env.AUTH_ADMIN_TOKEN;
 //Global Array to hold information of users in Sample Table
 var SampleArray=null;
 
+//data.clustername.hasura-app.io/.... url
+var dataurl="https://data."+process.env.CLUSTER_NAME+".hasura-app.io/v1/query";
+
+//notify.clustername.hasura-app.io/.... url
+var notifyurl="https://notify."+process.env.CLUSTER_NAME+".hasura-app.io/v1/send/email";
+
 //Global Counters to hold the count of incoming +ve/-ve feedback
 var posFeedBack=0, negFeedBack=0;
 
@@ -67,11 +73,12 @@ var headers = {
     'Authorization': AUTH1
 };
 var options = {
-    url: 'https://data.flub75.hasura-app.io/v1/query',
+    url: "",
     method: 'POST',
     headers: headers,
     body: bodyString
 }
+options.url=dataurl;
 var r= request(options, function (error, response, body) {
   if(!error && response.statusCode == 200){
     res.setHeader("Content-Type","application/json");
@@ -138,12 +145,12 @@ app.post('/login',function(req,res){
     };
 
     var options = {
-        url: 'https://data.flub75.hasura-app.io/v1/query',
+        url: "",
         method: 'POST',
         headers: headers,
         body: bodyString
     }
-
+    options.url=dataurl;
     var r= request(options, function (error, response, body) {
       if(!error && response.statusCode == 200){
         SampleArray=JSON.parse(body);
@@ -197,9 +204,9 @@ app.post('/sendemail',function(req,res){
 /*
   Body Of Request:
 {
-    "user_name": "<enter-username>",
+    "username": "<enter-username>",
     "user_id": "<enter-user-id>",
-    "email_id": "<some-email>@<domain-name>.com",
+    "emailid": "<some-email>@<domain-name>.com",
     "feedbacktext":"<some-feedback>",
     "score":"<refer-front-end-for-score>"
 }
@@ -240,11 +247,12 @@ var updateTable=function(callback){
         'Authorization': AUTH1
     };
     var options = {
-        url: 'https://data.flub75.hasura-app.io/v1/query',
+        url: "",
         method: 'POST',
         headers: headers,
         body: bodyString
     }
+    options.url=dataurl;
     var r= request(options, function (error, response, body) {
       if(!error && response.statusCode == 200){
         console.log(body);
@@ -300,12 +308,12 @@ var sendEmail=function(status2){
     };
 
     var options = {
-        url: 'https://notify.flub75.hasura-app.io/v1/send/email',
+        url: "",
         method: 'POST',
         headers: headers,
         body: bodyString
     }
-
+    options.url=notifyurl;
     var r= request(options, function (error, response, body) {
       if(!error && response.statusCode == 200){
         console.log(body);

@@ -7,16 +7,22 @@ Handle any obvious errors.
 
 ## Working of app
 
-* When user enters sample question (url or plain text), Watson API processes the request and displays appropriate           categories and score in percentage.
-* The server endpoint needs two inputs: username and question. Question entered can be in any format like text or URL.      Entered question is checked for text or URL using regex. 
-* A POST request with content type as application/json is made to custom microservice  (Watson Natural 
-* Understanding API) written in Node -JS-Express.
-* Output obtained from backend (JSON response) is parsed to show category.
+* When user enters sample text, then the user input is sent to server's custom microservice with a `POST` request having `"content-type":"application/json"` as Headers.
+* The custom microservice written in NodeJS-Express takes the data from POST request and using it makes API call to `"Watson NLU API"`, which processes the data and returns the response to custom microservice.
+* The custom microservice extract's data from API call's response and sends it back in response to the POST request made earlier.
+* The response (JSON) from POST request is parsed to show the relevant categories for the user input.
 
 
+## Running Locally
+Run the following commands on your system `cmd/gitbash` to setup this project locally and running it.
 
+    1.git clone "<paste_this_repo_url_here>"
+    2.cd watson-feedback-classifier/microservices/ui/app
+    3.npm install
+    4.npm start
 
-## Part 2 (Todo)
+Hooray!:tada: The app is running. Now edit the files as you like  and see the changes in browser.
+## Part 2 (Upcoming)
 
 ## Watson Feedback Classifier
 * This Watson Feedback Classifier will categorize the feedback emails and respond to each email according to its importance using the Watson Natural Language Understanding API (NLU).
