@@ -33,6 +33,11 @@ items:
               secretKeyRef:
                 name: hasura-secrets
                 key: wapi.password
+          - name: CLUSTER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: hasura-secrets
+                key: cluster.name
           - name: AUTH_TOKEN
             valueFrom:
               secretKeyRef:
