@@ -31,7 +31,7 @@ Thus, all incoming feedback is responded with an e-mail according to the score g
 ### How do I use it?
  1. Install [hasura CLI](https://docs.hasura.io/0.15/manual/install-hasura-cli.html)
  2. Get the project and `cd` into it.
- 3. `$ hasura quickstart ende/feedback-classifer`
+ 3. `$ hasura quickstart ende/feedback-classifier`
 4. A Bluemix account is created for access credentials to use the Watson API. After generating the username and password, 
 `$ hasura secrets update wapi.username <insert-your-username> 
 ` 
