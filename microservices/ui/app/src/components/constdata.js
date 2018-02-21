@@ -13,3 +13,4 @@ export const cardData = {
      keep an eye on your email.`
   }
 };
+

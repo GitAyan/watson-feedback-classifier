@@ -1,9 +1,10 @@
 import React, {Component} from "react";
-import { NavItem,Button,Form,FormGroup,Label,Input,ListGroup,ListGroupItem,Table} from "reactstrap";
+import { NavItem,Button,Form,FormGroup,Label,Input,ListGroup,ListGroupItem,Table,Card, CardTitle, CardText} from "reactstrap";
 import $ from 'jquery';
 import WNavbar, {WCard} from "./WConstComps";
-import {cardData} from './constdata';
-
+import {cardData} from "./constdata";
+import spinner from "./spinner.svg"
+import WFooter from "./WFooter";
 //create a list of category items based on the user input and fetch response
 const Catlist = (props) => {
   return (
@@ -66,10 +67,14 @@ class WFeedback extends Component {
     this.logout = this.logout.bind(this);
     this.sendFeedback = this.sendFeedback.bind(this);
     this.calScore = this.calScore.bind(this);
+    this.onDismiss = this.onDismiss.bind(this);
     this.state = {
       email: sessionStorage.getItem("email"),
       list: ["Categories"],
-      keywords: []
+      keywords: [],
+      isLoading: false,
+      visible: false,
+      errorText: ""
     }
   }
   //get results for the user input to display on clicking "show result" button
@@ -79,8 +84,14 @@ class WFeedback extends Component {
     let type = "text";
     let userInput = $("#feedback-text").val();
     let userData = JSON.stringify({username: username, type: type, string: userInput});
-
-    fetch("https://api.flub75.hasura-app.io/input", {
+    this.setState({isLoading:true});
+    if(this.state.list.length > 1){
+      let results = document.getElementById("results");
+      results.classList.remove("results-visible");
+      results.classList.add("results-hidden");
+    }
+    if(userInput.length > 15) {
+      fetch("https://api.flub75.hasura-app.io/input", {
         method: 'POST', 
         body: userData,
         headers: new Headers({'Content-Type': 'application/json'})
@@ -88,9 +99,23 @@ class WFeedback extends Component {
       .then(res => res.json())
       .then(res => {
         this.fetchUpdatesState(res);
+        this.setState({isLoading: false});
       })
-      .catch(error => alert("Something went wrong\nTry again"));
-  }
+      .catch(error =>{
+        this.setState({
+          isLoading:false,
+          errorText:"We couldn't find results for your input.",
+          visible: true,
+        });
+      });
+    } else {
+      this.setState({
+        isLoading: false,
+        errorText: "Enter some text or Enter some lengthy text.",
+        visible: true
+      })
+    }
+}
 //update the state with received keywords to display it to the user
   fetchUpdatesState(res) {
     let recievedCat = res
@@ -135,7 +160,7 @@ class WFeedback extends Component {
     let userInput = $("#feedback-text").val();
     let userData = JSON.stringify({username: username, type: type, string: userInput});
     let data = [id,username,email,userInput];
-
+    this.setState({isLoading: true});
     fetch("https://api.flub75.hasura-app.io/input", {
         method: 'POST', 
         body: userData,
@@ -145,7 +170,13 @@ class WFeedback extends Component {
       .then(res => {
        this.calScore(res,data);
       })
-      .catch(error => alert("Something went wrong\nTry again"));
+      .catch(error => {
+        this.setState({
+          isLoading:false,
+          errorText:"Something went wrong. Try again.",
+          visible: true,
+        });
+      });
   }
 //calculate the total no. of times the labels has repeated in the response and based on that set score value
 //send the data and score value to /sendemail enpoint where the rest of process will be taken care of.
@@ -199,12 +230,33 @@ class WFeedback extends Component {
         }
       })
       .done(res => {
+        this.setState({isLoading:false})
        this.props.FeedSubmit();
-      }).catch( res => alert("feedback not submitted. Try again."))
+      }).catch( res => {
+        this.setState({
+          isLoading:false,
+          errorText:"Sending Feedback failed. Try again.",
+          visible: true,
+        });
+      })
     }
   }
 
+  onDismiss() {
+    this.setState({ visible: false });
+  }
+
   render() {    
+    {
+      this.state.isLoading
+        ? ($("#spinnerdiv").removeClass("div-hidden").addClass("spinnerdiv-visible").css("height",$("html").height()))
+        : ($("#spinnerdiv").removeClass("spinnerdiv-visible").addClass("div-hidden"));
+    }
+    {
+      this.state.visible
+      ? ($("#erroralertdiv").removeClass("div-hidden").addClass("erroralert-visible").css("height",$("html").height()))
+      : ($("#erroralertdiv").removeClass("erroralert-visible").addClass("div-hidden"));
+    }
     //logout button to be passed to navbar
     const logoutbtn = (
       <NavItem className="ml-auto">
@@ -216,6 +268,24 @@ class WFeedback extends Component {
     let {title, text} = cardData.feedback;
     return (
       <div>
+        <div className="div-hidden" id="spinnerdiv">
+           <img src={spinner} className="spinner" alt="spinner"/>
+        </div>
+        <div id="erroralertdiv" className="div-hidden">
+         <Card id="erroralert">
+          <CardTitle id="errortitle">Error</CardTitle>
+          <CardText id="errortext">
+            {this.state.errorText}
+          </CardText>
+          <Button
+                onClick={this.onDismiss}
+                outline
+                id="errorback-btn"
+              >
+                close
+              </Button>
+         </Card>
+        </div>
         <WNavbar logoutbtn={logoutbtn}/>
         <div className="container-fluid">
           <div className="row" id="feedback-card-form">
@@ -259,7 +329,7 @@ class WFeedback extends Component {
                     className="mx-auto"
                     onClick={this.sendFeedback}
                     id="send-feedback">
-                    Send Feedack
+                    Send Feedback
                   </Button>
                 </div>
               </Form>
@@ -278,6 +348,7 @@ class WFeedback extends Component {
             </div>
           </div>
         </div>
+        <WFooter />
       </div>
     );
   }

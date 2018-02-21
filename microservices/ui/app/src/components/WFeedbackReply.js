@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import WNavbar,{WCard} from "./WConstComps";
 import {cardData} from './constdata';
 import { NavItem, Button} from "reactstrap";
+import WFooter from "./WFooter";
 
 class WFeedbackReply extends Component {
   constructor(props) {
@@ -36,6 +37,7 @@ goBack() {
             </div>
           </div>
         </div>
+        <WFooter />
       </div>
     );
   }

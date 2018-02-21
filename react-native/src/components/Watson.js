@@ -19,7 +19,7 @@ export default class Watson extends React.Component {
       user_id: props.user_id,
       sampleQuestion: '',
       jsonOutput: '',
-      responseOutput: '',
+      responseOutput: 'Thank you for your feedback',
       feedback: '',
       isReady: false,
       displayLabels: '',
@@ -49,8 +49,7 @@ export default class Watson extends React.Component {
     this.setState({
       ...this.state,
       sampleQuestion: sampleQuestion
-    })
-    this.state.sampleQuestion = sampleQuestion;
+    })    
   }
 
   handleAskPressed = async () => {
@@ -206,17 +205,14 @@ export default class Watson extends React.Component {
               console.log("Check e......: " + e);
               //keywrd neutral/pos/neg entity neutral or no keywrd and entity neutral
               if ((e !== -1 && neu !== -1) || (e !== -1 && p !== -1) || (e !== -1 && n !== -1) || (e !== -1 && itemsLength === 0)) {
-                this.state.score = "10";
-                this.state.responseOutput = "Thank you for your feedback";
+                this.state.score = "10";              
               }
               else if (en !== -1) { // if entity negative
-                this.state.score = "30";
-                this.state.responseOutput = "Thank you for your feedback";
+                this.state.score = "30";               
               }
               else {
                 if (ep !== -1) { //if entity positive
-                  this.state.score = "20";
-                  this.state.responseOutput = "Thank you for your feedback";
+                  this.state.score = "20";                
                 }
               }
             }
@@ -229,20 +225,16 @@ export default class Watson extends React.Component {
             if (e === undefined) {
               //negative-neutral or positive-neutral 
               if (((n !== -1 && neu !== -1)) || ((p !== -1 && neu !== -1))) {
-                this.state.score = "10";
-                this.state.responseOutput = "Thank you for your feedback";
+                this.state.score = "10";              
               }
               else if (p !== -1) {  //for positive keyword
-                this.state.score = "20";
-                this.state.responseOutput = "Thank you for your feedback";
+                this.state.score = "20";             
               }
               else if (n !== -1) { // for negative   keywrd 
-                this.state.score = "30";
-                this.state.responseOutput = "Thank you for your feedback";
+                this.state.score = "30";               
               }
               else if (neu !== -1) { // for neutral  keywrd 
-                this.state.score = "10";
-                this.state.responseOutput = "Thank you for your feedback";
+                this.state.score = "10";              
               }
               else {
                 this.state.score = "0";

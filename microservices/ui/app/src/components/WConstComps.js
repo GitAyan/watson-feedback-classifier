@@ -29,7 +29,7 @@ class WNavbar extends Component {
       <div id="navbar-div">
         <Navbar
           color="faded"
-          className="bg-dark navbar-dark"
+          className=""
           expand="md"
           id="navbar"
         >
